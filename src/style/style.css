@@ -2,11 +2,40 @@
 body {
     padding: 0;
     margin: 0;
+    position: relative;
 }
 html, body, main, #map {
     height: 100%;
     width: 100vw;
 }
-.leaflet-control-zoom {
-    visibility: hidden;
+
+#top-icon-bar > img {
+    height: 23px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 4px;
+    margin-top: 9px;
+
 }
+
+header {
+    z-index: 1000;
+    position: absolute;
+    background-color: #1f425fcc;
+    display: flex;
+    width: 100%;
+    color: #EDFCFA;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+}
+h1 {
+    font-size: 28px;
+    width: 35%;
+    font-family: monospace;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+.leaflet-control-zoom { visibility: hidden; }
