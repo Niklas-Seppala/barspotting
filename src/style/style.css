@@ -1,0 +1,12 @@
+
+body {
+    padding: 0;
+    margin: 0;
+}
+html, body, main, #map {
+    height: 100%;
+    width: 100vw;
+}
+.leaflet-control-zoom {
+    visibility: hidden;
+}
