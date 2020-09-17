@@ -20,9 +20,6 @@ export const map = {
         locations: new L.FeatureGroup()
     },
 
-    routes: new L.FeatureGroup(), // route layer group.
-    locationMarkers: new L.FeatureGroup(), // location marker layer group.
-
     newPos: function (latitude, longitude) {
         return {lat: latitude, lon: longitude}
     },
@@ -52,7 +49,7 @@ export const map = {
         },
         bar: {
             icon : L.icon({
-                iconUrl: './img/beer-icon.png',
+                iconUrl: './icons/beer-icon.png',
                 iconSize: [40, 45],
                 iconAnchor: [20, 40],
                 popupAnchor:[4, -80]
@@ -62,21 +59,9 @@ export const map = {
             opacity: 0.8,
             riseOnHover: true
         },
-        bus: {
-            icon : L.icon({
-                iconUrl: './img/bus-icon.png',
-                iconSize: [40, 45],
-                iconAnchor: [20, 40],
-                popupAnchor: [4, -80]
-            }),
-            title : 'bussi bysäkki',
-            alt: 'alt comes here',
-            opacity: 0.8,
-            riseOnHover: true
-        },
         pizza: {
             icon : L.icon({
-                iconUrl: './img/pizza-icon.png',
+                iconUrl: './icons/pizza-icon.png',
                 iconSize: [40, 45],
                 iconAnchor: [20, 40],
                 popupAnchor: [4, -80]
@@ -157,10 +142,16 @@ export const map = {
             zoomControl: false
         }).addTo(this.instance);
 
-        this.instance.locate({setView: true, maxZoom: 13});
+        this.instance.locate({watch: true, timeout: 5000, setView: false});
         this.instance.addLayer(this.layers.locations);
         this.instance.addLayer(this.layers.routes);
         return this;
+    },
+
+    focus: function() {
+        this.instance.setView([
+            this.user.position.lat, this.user.position.lon
+        ], 13);
     },
 
     /**
@@ -206,29 +197,36 @@ export const map = {
         return this.clearUserLocationMarker().SetUserMarker();
     },
 
-    // /**
-    //  * Creates and sets marker to map. Adds the created marker
-    //  * to marker layer group. If marker options are not provided,
-    //  * default options are used. Include popupHTML parameter if
-    //  * you wish to include popup to map marker.
-    //  * 
-    //  * @param {Position} markerPos marker Position object.
-    //  * @param {object} location location object 
-    //  * @param {object} options marker style options
-    //  * @param {string} popupHTML popup's HTML string
-    //  * @param {Function} onClick click eventHandler function,
-    //  *      uses earlier location and position parameters.
-    //  */
-    // setMarker: function (markerPos, location, options, popupHTML=null, onClick=null) {
-    //     const drawOptions = options ? options : this.markerOptions.default;
-    //     const marker = L.marker([markerPos.lat, markerPos.lon], drawOptions).addTo(mapObject);
-    //     if (popupHTML) {
-    //         marker.bindPopup(popupHTML)
-    //     }
-    //     setMarkerClickEvent(marker, markerPos, location, onClick);
-    //     locationMarkers.addLayer(marker);
-    //     return this;
-    // },
+    /**
+     * Creates and sets marker to map. Adds the created marker
+     * to marker layer group. If marker options are not provided,
+     * default options are used. Include popupHTML parameter if
+     * you wish to include popup to map marker.
+     * 
+     * @param {Position} markerPos marker latlon object.
+     * @param {object} location location object 
+     * @param {object} options marker style options
+     * @param {string} popupHTML popup's HTML string
+     * @param {Function} onClick click eventHandler function,
+     *      uses earlier location and position parameters.
+     */
+    setMarker: function (markerPos, location, options, popupHTML=null, onClick=null) {
+        const drawOptions = options ? options : this.markerOptions.default;
+        const marker = L.marker([markerPos.lat, markerPos.lon], drawOptions).addTo(this.instance);
+        if (popupHTML) {
+            marker.bindPopup(popupHTML, {
+                maxHeight: 350,
+                maxWidth: 200,
+                autoPan: true,
+                closeOnClick: true
+            });
+        }
+        if (onClick) {
+            setMarkerClickEvent(marker, markerPos, location, onClick);
+        }
+        this.layers.locations.addLayer(marker);
+        return this;
+    },
 
     /**
      * Creates and sets user's location marker to map.
@@ -241,20 +239,31 @@ export const map = {
      * 
      */
     SetUserMarker: function (popupHTML=null, onClick=null) {
-        console.log(this.user.position)
         this.user.marker = L.marker(this.user.position, this.markerOptions.user)
             .addTo(this.instance);
-
         if (popupHTML) {
             this.user.marker.bindPopup(popupHTML)
         }
-        
         if (onClick) {
             this.user.marker.on('click', _ => {
                 onClick.call(this.user.marker);
             });
         }
         return this;
+    },
+
+    createLocationHTML: function(location) { //${openHours}
+        return `
+<section class="popup">
+    <a href="${location.info_url}"><h2>${location.name.fi}</h2></a>
+    <span class="address">${`${location.location.address.street_address} ${location.location.address.locality}`}</span>
+    <span class="schedule"></span>
+    <a href="sadsad"></a>
+    <p class="desc">
+        ${location.description.body}
+    </p>
+    ${location.description.images.length > 0 ? `<img src="${location.description.images[0].url}" alt="">` : ''}
+</section>`
     },
 
     // /**
@@ -276,34 +285,34 @@ export const map = {
 }
 
 
-// /**
-//  * Sets marker click event. When marker is clicked,
-//  * map moves on top of that marker and zooms in smoothly.
-//  * Marker is also highlighted, and raised to the top on Z-axis.
-//  * 
-//  * @param {object} marker marker object.
-//  * @param {Position} position marker's Position object.
-//  * @param {object} location location object.
-//  * @param {Function} onClick eventhandler function.
-//  */
-// function setMarkerClickEvent(marker, position, location, onClick) {
-//     marker.on('click', eArgs => {
-//         if (mapObject.getZoom() >= 13) {
-//             mapObject.panTo(eArgs.target.getLatLng(), mapObject.moveViewOptions); // No zoom
-//         } else {
-//             mapObject.setView(eArgs.target.getLatLng(), 13,
-//             mapObject.moveViewOptions);
-//         }
-//         if (map.user.marker) {
-//             map.user.marker.setOpacity(0.8);
-//             map.user.marker.setZIndexOffset(0);
-//         }
-//         eArgs.target.setOpacity(1);
-//         eArgs.target.setZIndexOffset(100);
-//         map.user.marker = marker;
+/**
+ * Sets marker click event. When marker is clicked,
+ * map moves on top of that marker and zooms in smoothly.
+ * Marker is also highlighted, and raised to the top on Z-axis.
+ * 
+ * @param {object} marker marker object.
+ * @param {Position} position marker's Position object.
+ * @param {object} location location object.
+ * @param {Function} onClick eventhandler function.
+ */
+function setMarkerClickEvent(marker, position, location, onClick) {
+    marker.on('click', eArgs => {
+        if (map.instance.getZoom() >= 13) {
+            map.instance.panTo(eArgs.target.getLatLng(), map.instance.moveViewOptions); // No zoom
+        } else {
+            map.instance.setView(eArgs.target.getLatLng(), 13,
+            map.instance.moveViewOptions);
+        }
+        if (map.user.marker) {
+            map.user.marker.setOpacity(0.8);
+            map.user.marker.setZIndexOffset(0);
+        }
+        eArgs.target.setOpacity(1);
+        eArgs.target.setZIndexOffset(100);
+        map.user.marker = marker;
 
-//         if (onClick) {
-//             onClick.call(null, ...[position, location]);
-//         }
-//     });
-// }
+        if (onClick) {
+            onClick.call(null, ...[position, location]);
+        }
+    });
+}

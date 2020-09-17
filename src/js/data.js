@@ -55,11 +55,11 @@ export const locationAPI = {
      * 
      * @param {object[]} locations location collection.
      * @param {string[]} tagArray tag collection to use in query.
-     * @param {boolean} all if query is exclusive => false, else true.
+     * @param {boolean} exclusive if query is exclusive => false, else true.
      * 
      * @returns {object[]} collection that holds matching destinations.
      */
-    filterLocationsByTags: function (locations, tagArray, all=false) { 
+    filterLocationsByTags: function (locations, tagArray, exclusive=false) { 
 
         function contains(array, itemToFind) {
             for (let i = 0; i < array.length; i++) {
@@ -71,7 +71,7 @@ export const locationAPI = {
             return false;
         }
         const results = []; // TODO: create extra function?
-        if (all) {
+        if (exclusive) {
             // all specified tags must be found in destination
             for (let i = 0; i < locations.length; i++) {
                 const location = locations[i];
@@ -110,28 +110,6 @@ export const locationAPI = {
         }
         return results;
     },
-
-    /**
-     * Gets (bar/pizza) location using specified
-     * latitude and longitude and range.
-     * 
-     * @param {object[]} locations Location collection
-     * @param {Position} position Position object containing latitude and longitude
-     * @param {number} range Max range (km) to include
-     *      location to result array
-     * 
-     * @returns {object[]} destination object array
-     */
-    getLocationsByPos: function (locations, position, range) {
-        const results = []
-        for (let i = 0; i < locations.length; i++) {
-            const dest = locations[i];
-            if (calculateDistance(position.lat, position.lon, dest.location.lat, dest.location.lon) < range) {
-                results.push(dest);
-            }
-        }
-        return results;
-    }
 }
 
 export const routesAPI = {
