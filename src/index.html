@@ -24,17 +24,36 @@
 </head>
 <body>
     <header>
-        <section id="menu-bar">
+        <section id="menu-panel">
             <h1>Bus2Bar</h1>
-            <div id="top-icon-bar">
-                <img src="./icons/marker-icon.png" alt="menu">
-                <img src="./icons/info-icon.png" alt="menu">
+            <div class="btn-container" id="menu-icons">
+                <div id="locate-user-btn" class="btn"><img src="./icons/marker-icon.png" alt="menu"></div>
+                <div class="btn"><img src="./icons/info-icon.png" alt="menu"></div>
             </div>
         </section>
-        <section id="settings-bar">
-            <div id="settings-bar-button">
-                <img src="./icons/settings-icon.png" alt="menu">
+        <section id="settings-panel">
+            <div class="btn" id="settings-panel-button">
+                <img src="./icons/menu-icon.png" alt="menu">
             </div>
+
+            <div class="text-input">
+                <input type="text">
+                <div class="btn" id="search-btn"><img src="./icons/search-icon.png" alt=""></div>
+            </div>
+
+
+            <div class="tag-selection">
+                <ul class="tags" id="tag-types">
+                    <li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Baari</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Yökerho</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Kahvila</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Pubi</label></div></li>
+                </ul>
+                <ul class="tags" id="tag-styles">
+                    <li><div class="slider-checkbox"><input type="checkbox"><label class="label">Biljardi</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Live musiikki</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Metalli</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Olut</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Karaoke</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Rock</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Sportti</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">LGBT</label></div></li>
+                </ul>
+            </div>
+
+
+
+
         </section>
     </header>
 
