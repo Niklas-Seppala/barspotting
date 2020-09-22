@@ -4,6 +4,7 @@ import { map } from "./map.js";
 import { ui } from "./ui.js"
 import { locationAPI, routesAPI } from "./data.js";
 
+let currentDestination = null;
 let bars, pizzas;
 let locateTogle = true;
 
@@ -76,9 +77,22 @@ export const events = {
             // if (currentDestination && location.id === currentDestination.id) {
             //     destinationGotFiltered = false;
             // }
-            // const html = map.createLocationHTML(loc);
-            map.setMarker(map.newPos(loc.location.lat, loc.location.lon), loc,
-                map.markerOptions.bar, null, null); //appEvents.onlocationMarkerClicked
+            const marker = map.setLocationMarker(loc, map.markerOptions.bar);
+            marker.on('click', async _ => {
+                map.clearRoutes();
+                currentDestination = loc;
+                const routePanel = document.querySelector('#route-panel');
+                if (routePanel.classList.contains('routes-up')) {
+                    routePanel.classList.add('routes-down');
+                    routePanel.classList.remove('routes-up')
+                }
+                const routes = await routesAPI.getRoutesToBarAsync(map.user.position, loc.location, ui.userOptions.filterWalkRoutes);
+                if (routes) {
+                    ui.renderRouteInstructions(routes, loc);
+                } else {
+                    ui.renderError('no routes');
+                }
+            })
         });
 
         // if (userCtrValues.includePizzas) {
@@ -97,8 +111,8 @@ export const events = {
         //     currentDestination = null;
         // }
     },
+
+    // onlocationMarkerClicked: async function (location) {
+        
+    // }
 }
-
-
-
-

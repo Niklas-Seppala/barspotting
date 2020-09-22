@@ -5,6 +5,7 @@ body {
     color: #EDFCFA;
     /* font-family: 'Krona One', sans-serif; */
     font-family: monospace;
+    overflow: hidden;
 }
 a {
     color: inherit;
@@ -200,6 +201,39 @@ h1 {
 .popup > h2 {
     margin-bottom: 0.4em;
 }
+
+#map {
+    position: relative;
+}
+
+
+
+#route-panel {
+    height: 250px;
+    position: absolute;
+    z-index: 1001;
+    bottom: -290px;
+    background: #0d192499;
+    width: 100%;
+}
+
+#route-panel-btn {
+    position: absolute;
+    right: -4px;
+}
+.routes-up { animation: slide-routes-up .5s ease normal forwards; }
+.routes-down { animation: slide-routes-down .5s ease normal forwards; }
+
+@keyframes slide-routes-up {
+    0% { bottom: -290px; }
+    100% { bottom: 0px; }
+}
+@keyframes slide-routes-down {
+    0% { bottom: 0px; }
+    100% { bottom: -290px; }
+}
+
+
 
 .hidden {
     display: none;

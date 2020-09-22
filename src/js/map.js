@@ -52,7 +52,7 @@ export const map = {
                 iconUrl: './icons/beer-icon.png',
                 iconSize: [40, 45],
                 iconAnchor: [20, 40],
-                popupAnchor:[4, -80]
+                popupAnchor:[0, -40]
             }),
             title : 'Kalja rafla',
             alt: 'alt comes here',
@@ -64,7 +64,7 @@ export const map = {
                 iconUrl: './icons/pizza-icon.png',
                 iconSize: [40, 45],
                 iconAnchor: [20, 40],
-                popupAnchor: [4, -80]
+                popupAnchor: [0, -40]
             }),
             title : 'pizzeria',
             alt: 'alt comes here',
@@ -203,29 +203,27 @@ export const map = {
      * default options are used. Include popupHTML parameter if
      * you wish to include popup to map marker.
      * 
-     * @param {Position} markerPos marker latlon object.
      * @param {object} location location object 
      * @param {object} options marker style options
      * @param {string} popupHTML popup's HTML string
      * @param {Function} onClick click eventHandler function,
      *      uses earlier location and position parameters.
      */
-    setMarker: function (markerPos, location, options, popupHTML=null, onClick=null) {
+    setLocationMarker: function (location, options=null, popupHTML=null) {
+
         const drawOptions = options ? options : this.markerOptions.default;
-        const marker = L.marker([markerPos.lat, markerPos.lon], drawOptions).addTo(this.instance);
+
+        const marker = L.marker([location.location.lat, location.location.lon], drawOptions)
+            .addTo(this.instance);
+
         if (popupHTML) {
-            marker.bindPopup(popupHTML, {
-                maxHeight: 350,
-                maxWidth: 200,
-                autoPan: true,
-                closeOnClick: true
-            });
+            marker.bindPopup(popupHTML);
         }
-        if (onClick) {
-            setMarkerClickEvent(marker, markerPos, location, onClick);
-        }
+
+        setMarkerClickEvent(marker, location);
+
         this.layers.locations.addLayer(marker);
-        return this;
+        return marker;
     },
 
     /**
@@ -241,6 +239,7 @@ export const map = {
     SetUserMarker: function (popupHTML=null, onClick=null) {
         this.user.marker = L.marker(this.user.position, this.markerOptions.user)
             .addTo(this.instance);
+
         if (popupHTML) {
             this.user.marker.bindPopup(popupHTML)
         }
@@ -252,36 +251,26 @@ export const map = {
         return this;
     },
 
-    createLocationHTML: function(location) { //${openHours}
-        return `
-<section class="popup">
-    <a href="${location.info_url}"><h2>${location.name.fi}</h2></a>
-    <span class="address">${`${location.location.address.street_address} ${location.location.address.locality}`}</span>
-    <span class="schedule"></span>
-    <a href="sadsad"></a>
-    <p class="desc">
-        ${location.description.body}
-    </p>
-    ${location.description.images.length > 0 ? `<img src="${location.description.images[0].url}" alt="">` : ''}
-</section>`
+    createLocationHTML: function(location) {
+        return `<h3>${location.name.fi}</h3>`
     },
 
-    // /**
-    //  * Draws route polyline to map. Adds route to route layer group.
-    //  * If draw options are not provided in parameters, polyline
-    //  * is drawn using default options.
-    //  * 
-    //  * @param {string} points encoded google polyline string
-    //  * @param {object} drawOptions polyline style options
-    //  * 
-    //  */
-    // drawRoute: function (points, drawOptions) {
-    //     const options = drawOptions ? drawOptions : routeDrawOptions.default;
-    //     const route = L.polyline(polyline.decode(points), options);
-    //     route.addTo(mapObject);
-    //     routes.addLayer(route);
-    //     return this;
-    // }
+    /**
+     * Draws route polyline to map. Adds route to route layer group.
+     * If draw options are not provided in parameters, polyline
+     * is drawn using default options.
+     * 
+     * @param {string} points encoded google polyline string
+     * @param {object} drawOptions polyline style options
+     * 
+     */
+    drawRoute: function (points, drawOptions) {
+        const options = drawOptions ? drawOptions : this.routeDrawOptions.DEFAULT;
+        const route = L.polyline(polyline.decode(points), options);
+        route.addTo(this.instance);
+        this.layers.routes.addLayer(route);
+        return this;
+    }
 }
 
 
@@ -291,11 +280,9 @@ export const map = {
  * Marker is also highlighted, and raised to the top on Z-axis.
  * 
  * @param {object} marker marker object.
- * @param {Position} position marker's Position object.
  * @param {object} location location object.
- * @param {Function} onClick eventhandler function.
  */
-function setMarkerClickEvent(marker, position, location, onClick) {
+function setMarkerClickEvent(marker, location, ) {
     marker.on('click', eArgs => {
         if (map.instance.getZoom() >= 13) {
             map.instance.panTo(eArgs.target.getLatLng(), map.instance.moveViewOptions); // No zoom
@@ -310,9 +297,5 @@ function setMarkerClickEvent(marker, position, location, onClick) {
         eArgs.target.setOpacity(1);
         eArgs.target.setZIndexOffset(100);
         map.user.marker = marker;
-
-        if (onClick) {
-            onClick.call(null, ...[position, location]);
-        }
     });
 }

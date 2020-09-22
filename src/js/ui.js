@@ -1,6 +1,7 @@
 'use strict'
 
 import { events } from "./main.js";
+import { map } from "./map.js";
 
 export const ui = {
 
@@ -44,6 +45,14 @@ export const ui = {
             settingsBar.classList.toggle('panel-up');
         })
 
+        const routePanelBtn = document.querySelector('#route-panel-btn');
+        const routePanel = document.querySelector('#route-panel');
+
+        routePanelBtn.addEventListener('click', _ => {
+            routePanel.classList.toggle('routes-down');
+            map.clearRoutes();
+        });
+
         // locate button
         const locateBtn = document.querySelector('#locate-user-btn')
         locateBtn.addEventListener('click', _ => events.onLocateBtnClicked());
@@ -81,5 +90,21 @@ export const ui = {
         searchBtn.addEventListener('click', _ => {
             console.log(searchInput.value)
         })
+    },
+
+    renderRouteInstructions: function(routes, destination) {
+        console.log('render routes called')
+
+        const routePanel = document.querySelector('#route-panel');
+        routePanel.classList.add('routes-up');
+        routePanel.classList.remove('routes-down')
+
+        routes[0].legs.forEach(leg => {
+            map.drawRoute(leg.legGeometry.points, map.routeDrawOptions[leg.mode]);
+        });
+    },
+
+    renderError: function(err) {
+        console.error(err);
     }
 }

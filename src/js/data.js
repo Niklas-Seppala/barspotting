@@ -3,6 +3,66 @@
 const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 const DIGITRANSIT_URL = `https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql`;
 
+const graphQl = {
+    options: {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/graphql',
+          'Accept': 'application/json',
+      },
+      body: null
+    },
+    /**
+     * Creates graphQL POST body for route query between
+     * two positions. 
+     * 
+     * @param {Position} fromPosition route start position.
+     * @param {Position} toPosition route target position.
+     * @param {number} resultCount query result count.
+     * 
+     * @returns {string} graphQL POST body as string.
+     */
+    getRouteToDest: (fromPosition, toPosition, resultCount) => `{
+      plan(
+        from: { lat:${fromPosition.lat}, lon: ${fromPosition.lon} }
+        to: {lat:${toPosition.lat}, lon: ${toPosition.lon} }
+        numItineraries: ${resultCount}
+      ) {
+        itineraries {
+          legs {
+            intermediateStops {
+              name
+            }
+            route {
+              id,
+              gtfsId,
+              shortName
+              longName
+            }
+            mode
+            startTime
+            endTime
+            duration
+            to {
+              name
+              lat
+              lon
+            }
+            distance
+            from {
+              name
+              lat
+              lon
+            }
+            legGeometry {
+              points
+            }
+          }
+        }
+      }
+    }`
+}
+
 /**
  * 
  */
@@ -23,8 +83,6 @@ export const locationAPI = {
             return data.data; // Extract only the important data
         } catch (error) {
             console.error(error.message);
-            console.log('getting backup data');
-            return pizza;
         }
     },
 
@@ -44,8 +102,6 @@ export const locationAPI = {
             return data.data; // Extract only the important data
         } catch (error) {
             console.error(error.message);
-            console.log('getting backup data..');
-            return bars;
         }
     },
 
@@ -119,27 +175,20 @@ export const routesAPI = {
      * Can be configured to ignore walk-only routes.
      * Sorts the routes by travel duration by default.
      * 
-     * @param {Position} fromPosition Start position latitude.
-     * @param {Position} toPosition Start position longitude.
-     * @param {number} toLat Destination position latitude.
-     * @param {number} toLon Destination position longitude.
-     * @param {Function} sortFunc Sort function.
+     * @param {Position} fromPosition Start position.
+     * @param {Position} toPosition Destination position.
      * 
      * @returns {Array} Collection of routes. In case of
      *      error returns false.
      */
-    getRoutesToBarAsync: async function (fromPosition, toPosition, ignoreWalkRoutes=false, sortFunc) {
+    getRoutesToBarAsync: async function (fromPosition, toPosition, ignoreWalkRoutes=false) {
         try {
             // Create request body
             graphQl.options.body = graphQl.getRouteToDest(fromPosition, toPosition, 3);
             
             // Send request and process the response
             const response = await fetch(DIGITRANSIT_URL, graphQl.options);
-            const routes = (await response.json()).data.plan.itineraries
-                .map(r => new Route(r))
-                .sort(sortFunc ? sortFunc : Route.cmpArrivalTimesFromNow);
-
-            // Filter walk only routes if requested
+            const routes = (await response.json()).data.plan.itineraries;
             return ignoreWalkRoutes ? routes.filter(r => r.modes[0] !== 'WALK') : routes;
         } catch (error) {
             console.error(error);
@@ -147,28 +196,5 @@ export const routesAPI = {
         } finally {
             graphQl.options.body = null;
         }
-    }
+    },
 }
-
-/**
- * Calculates distance between two points on Earth.
- * 
- * @param {number} lat1 point 1 latitude
- * @param {number} long1 point 1 longitude
- * @param {number} lat2 point 2 latitude
- * @param {number} long2 point 2 longitude
- * 
- * @returns {number} Distance between points (km)
- */
-function calculateDistance(lat1, long1, lat2, long2) {
-    let lat1Rad = lat1 / (180/Math.PI);
-    let long1Rad = long1 / (180/Math.PI);
-    let lat2Rad = lat2 / (180/Math.PI);
-    let long2Rad = long2 / (180/Math.PI);
-
-    let distance = 3963.0 * Math.acos(
-        (Math.sin(lat1Rad) * Math.sin(lat2Rad)) + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.cos(long2Rad - long1Rad)
-    ) * 1.609344;
-
-    return distance;
-};
