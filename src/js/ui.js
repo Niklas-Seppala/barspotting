@@ -1,4 +1,5 @@
 'use strict'
+
 import { events } from "./main.js";
 
 export const ui = {
@@ -75,7 +76,6 @@ export const ui = {
                 events.onLocationParamsChange();
             })
         }
-
         const searchInput = document.querySelector('#search-input');
         const searchBtn = document.querySelector('#search-btn');
         searchBtn.addEventListener('click', _ => {
