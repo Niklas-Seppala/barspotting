@@ -2,9 +2,8 @@
 
 import { map } from "./map.js";
 import { ui } from "./ui.js"
-import { locationAPI, routesAPI } from "./data.js";
+import { locationAPI } from "./data.js";
 
-let currentDestination = null;
 let bars, pizzas;
 let locateTogle = true;
 
@@ -17,13 +16,8 @@ window.onload = () => {
 
     Promise.all(fetchStaticData).then(data => {
         [bars, pizzas] = data;
-        alert('bars are here')
-        try {
-            map.createLocations(bars, map.markerOptions.bar, null);
-            events.onLocationParamsChange();
-        } catch (error) {
-            alert(error.message)
-        }
+        map.createLocations(bars, map.markerOptions.bar, null);
+        events.onLocationParamsChange();
     });
 }
 
@@ -53,7 +47,6 @@ export const events = {
         if (map.layers.locations) {
             map.clearLocationMarkers();
         }
-        
         const filteredBarIds = locationAPI.filterLocationsByTags(bars, ui.locationTags.styles
             .concat(ui.locationTags.types)
             .filter(tag => tag.include)

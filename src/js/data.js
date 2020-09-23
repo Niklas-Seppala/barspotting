@@ -112,7 +112,7 @@ export const locationAPI = {
      * @param {object[]} locations location collection.
      * @param {string[]} tagArray tag collection to use in query.
      * 
-     * @returns {object[]} collection that holds matching destinations.
+     * @returns {string[]} location id array
      */
     filterLocationsByTags: function (locations, tagArray) {
         return locations

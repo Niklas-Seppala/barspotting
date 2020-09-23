@@ -11,7 +11,6 @@ export const ui = {
     },
 
     locationTags: {
-        // exclusive: false,
         types : [
             { tag: 'Bar', uiStr: 'Baari', include: true },
             { tag: ['Nightclub', 'Club'] , uiStr: 'Yökerho', include: true },
@@ -82,7 +81,6 @@ export const ui = {
     },
 
     renderRouteInstructions: function(routes, destination) {
-
         const routePanel = document.querySelector('#route-panel');
         routePanel.classList.add('routes-up');
         routePanel.classList.remove('routes-down')

@@ -235,6 +235,7 @@ export const map = {
     refreshUserLocationMarker: function () {
         this.clearUserLocationMarker();
         this.user.marker = L.marker(this.user.position, this.markerOptions.user)
+        this.user.marker.addTo(this.instance);
         return this;
     },
 
