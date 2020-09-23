@@ -1,14 +1,9 @@
 'use strict'
 
-/**
- * Container object to functions and
- * constant data related to map state
- * manipulation.
- * 
- * All functions support function call chaining.
- */
-export const map = {
+import { routesAPI } from "./data.js";
+import { ui } from "./ui.js";
 
+export const map = {
     user: {
         position: null,
         marker: null,
@@ -20,26 +15,22 @@ export const map = {
         locations: new L.FeatureGroup()
     },
 
+    markerPool: {
+        locations: [],
+        routes: []
+    },
+
     newPos: function (latitude, longitude) {
         return {lat: latitude, lon: longitude}
     },
 
-    /**
-     * Map movement animation options
-     * object. DON'T CHANGE THE STATE!
-     */
     moveViewOptions: {
         animate: true,
         duration: 0.6,
         easeLinearity: 0.25,
         noMoveStart: true
-    }, 
+    },
 
-    /**
-     * Map marker style options. Use these when you want
-     * to set markers with pre-defined styles
-     * to map. DON'T CHANGE THE STATES!
-     */
     markerOptions: {
         default: {
             title : 'title here',
@@ -148,6 +139,54 @@ export const map = {
         return this;
     },
 
+    createLocations: function(locations, options, popupHTML) {
+        const drawOptions = options ? options : this.markerOptions.default;
+        locations.forEach(loc => {
+            const marker = L.marker([loc.location.lat, loc.location.lon], drawOptions)
+            .addTo(this.instance);
+
+            if (popupHTML) {
+                marker.bindPopup(popupHTML);
+            }
+            marker.locationId = loc.id;
+
+            marker.on('click', eArgs => {
+                if (map.instance.getZoom() >= 13) {
+                    map.instance.panTo(eArgs.target.getLatLng(), map.instance.moveViewOptions); // No zoom
+                } else {
+                    map.instance.setView(eArgs.target.getLatLng(), 13,
+                    map.instance.moveViewOptions);
+                }
+                if (map.user.marker) {
+                    map.user.marker.setOpacity(0.8);
+                    map.user.marker.setZIndexOffset(0);
+                }
+                eArgs.target.setOpacity(1);
+                eArgs.target.setZIndexOffset(100);
+                map.user.marker = marker;
+            });
+
+            marker.on('click', async _ => {
+
+                console.log('marker clicked')
+
+                this.clearRoutes();
+                const routePanel = document.querySelector('#route-panel');
+                if (routePanel.classList.contains('routes-up')) {
+                    routePanel.classList.add('routes-down');
+                    routePanel.classList.remove('routes-up')
+                }
+                const routes = await routesAPI.getRoutesToBarAsync(this.user.position, loc.location);
+                if (routes) {
+                    ui.renderRouteInstructions(routes, loc);
+                } else {
+                    ui.renderError('no routes');
+                }
+            })
+            this.markerPool.locations.push(marker);
+        });
+    },
+
     focus: function() {
         this.instance.setView([
             this.user.position.lat, this.user.position.lon
@@ -194,60 +233,8 @@ export const map = {
      * Refreshes user's marker to new position.
      */
     refreshUserLocationMarker: function () {
-        return this.clearUserLocationMarker().SetUserMarker();
-    },
-
-    /**
-     * Creates and sets marker to map. Adds the created marker
-     * to marker layer group. If marker options are not provided,
-     * default options are used. Include popupHTML parameter if
-     * you wish to include popup to map marker.
-     * 
-     * @param {object} location location object 
-     * @param {object} options marker style options
-     * @param {string} popupHTML popup's HTML string
-     * @param {Function} onClick click eventHandler function,
-     *      uses earlier location and position parameters.
-     */
-    setLocationMarker: function (location, options=null, popupHTML=null) {
-
-        const drawOptions = options ? options : this.markerOptions.default;
-
-        const marker = L.marker([location.location.lat, location.location.lon], drawOptions)
-            .addTo(this.instance);
-
-        if (popupHTML) {
-            marker.bindPopup(popupHTML);
-        }
-
-        setMarkerClickEvent(marker, location);
-
-        this.layers.locations.addLayer(marker);
-        return marker;
-    },
-
-    /**
-     * Creates and sets user's location marker to map.
-     * Marker style options are pre-defined user options.
-     * Include popupHTML parameter if you wish to add popup
-     * to marker.
-     * 
-     * @param {string} popupHTML popup's HTML string
-     * @param {Function} onClick click eventhandler function
-     * 
-     */
-    SetUserMarker: function (popupHTML=null, onClick=null) {
+        this.clearUserLocationMarker();
         this.user.marker = L.marker(this.user.position, this.markerOptions.user)
-            .addTo(this.instance);
-
-        if (popupHTML) {
-            this.user.marker.bindPopup(popupHTML)
-        }
-        if (onClick) {
-            this.user.marker.on('click', _ => {
-                onClick.call(this.user.marker);
-            });
-        }
         return this;
     },
 
@@ -273,29 +260,3 @@ export const map = {
     }
 }
 
-
-/**
- * Sets marker click event. When marker is clicked,
- * map moves on top of that marker and zooms in smoothly.
- * Marker is also highlighted, and raised to the top on Z-axis.
- * 
- * @param {object} marker marker object.
- * @param {object} location location object.
- */
-function setMarkerClickEvent(marker, location, ) {
-    marker.on('click', eArgs => {
-        if (map.instance.getZoom() >= 13) {
-            map.instance.panTo(eArgs.target.getLatLng(), map.instance.moveViewOptions); // No zoom
-        } else {
-            map.instance.setView(eArgs.target.getLatLng(), 13,
-            map.instance.moveViewOptions);
-        }
-        if (map.user.marker) {
-            map.user.marker.setOpacity(0.8);
-            map.user.marker.setZIndexOffset(0);
-        }
-        eArgs.target.setOpacity(1);
-        eArgs.target.setZIndexOffset(100);
-        map.user.marker = marker;
-    });
-}

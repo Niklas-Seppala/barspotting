@@ -7,12 +7,11 @@ export const ui = {
 
     userOptions: {
         rangeInKm: 20,
-        includePizzas: false,
-        filterWalkRoutes: false
+        includePizzas: false
     },
 
     locationTags: {
-        exclusive: false,
+        // exclusive: false,
         types : [
             { tag: 'Bar', uiStr: 'Baari', include: true },
             { tag: ['Nightclub', 'Club'] , uiStr: 'Yökerho', include: true },
@@ -58,14 +57,9 @@ export const ui = {
         locateBtn.addEventListener('click', _ => events.onLocateBtnClicked());
 
         const tags = document.querySelector('#tag-selection');
-        const exclusiveCheckbox = tags.querySelector('#exclusive-tags');
         const tagTypes = tags.querySelector('#tag-types').children;
         const tagStyles = tags.querySelector('#tag-styles').children;
 
-        exclusiveCheckbox.addEventListener('change', _ => {
-            this.locationTags.exclusive = !this.locationTags.exclusive;
-            events.onLocationParamsChange();
-        })
 
         for (let i = 0; i < tagTypes.length; i++) {
             const elem = tagTypes[i];
@@ -85,15 +79,9 @@ export const ui = {
                 events.onLocationParamsChange();
             })
         }
-        const searchInput = document.querySelector('#search-input');
-        const searchBtn = document.querySelector('#search-btn');
-        searchBtn.addEventListener('click', _ => {
-            console.log(searchInput.value)
-        })
     },
 
     renderRouteInstructions: function(routes, destination) {
-        console.log('render routes called')
 
         const routePanel = document.querySelector('#route-panel');
         routePanel.classList.add('routes-up');

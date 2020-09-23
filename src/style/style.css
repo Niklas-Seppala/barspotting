@@ -3,7 +3,6 @@ body {
     margin: 0;
     position: relative;
     color: #EDFCFA;
-    /* font-family: 'Krona One', sans-serif; */
     font-family: monospace;
     overflow: hidden;
 }
@@ -52,30 +51,29 @@ h1 {
 #settings-panel {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-evenly;
+    justify-content: center;
+    align-items: center;
     position: absolute;
-    top: -464px;
-    height: 510px;
+    top: -230px;
+    height: 300px;
     width: 100%;
     background: #0d192499;
 }
 
 #tag-selection {
     display: flex;
-    flex-direction: column;
 }
 
 /* PANEL ANIMATIONS */
 .panel-up { animation: slide-up .5s ease normal forwards; }
 .panel-down { animation: slide-down .5s ease normal forwards; }
 @keyframes slide-up {
-    0% { top: 20px; }
-    100% { top: -464px; }
+    0% { top: 40px; }
+    100% { top: -230px; }
 }
 @keyframes slide-down {
-    0% { top: -464px; }
-    100% { top: 20px;}
+    0% { top: -230px; }
+    100% { top: 40px;}
 }
 /*******************************/
 
@@ -118,6 +116,7 @@ h1 {
 }
 .text-input > input {
     height: 1.6em;
+    width: 11.8em;
     font-size: 18px;
     border-radius: 7px;
     border-color: #235d8d;

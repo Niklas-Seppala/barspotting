@@ -111,85 +111,23 @@ export const locationAPI = {
      * 
      * @param {object[]} locations location collection.
      * @param {string[]} tagArray tag collection to use in query.
-     * @param {boolean} exclusive if query is exclusive => false, else true.
      * 
      * @returns {object[]} collection that holds matching destinations.
      */
-    filterLocationsByTags: function (locations, tagArray, exclusive=false) { 
-
-        function contains(array, itemToFind) {
-            for (let i = 0; i < array.length; i++) {
-                const item = array[i];
-                if (item === itemToFind) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        const results = []; // TODO: create extra function?
-        if (exclusive) {
-            // all specified tags must be found in destination
-            for (let i = 0; i < locations.length; i++) {
-                const location = locations[i];
-                // extract tags for contains function
-                const locationTags = location.tags.map(tag => tag.name); 
-                let allFound = true;
-                for (let j = 0; j < tagArray.length; j++) {
-                    const tag = tagArray[j];
-                    if (!contains(locationTags, tag)) {
-                        allFound = false;
-                        break;
-                    }
-                }
-                if (allFound) {
-                    results.push(location);
-                }
-            }
-        } else {
-            // Only one of the tags must be found in destination
-            for (let i = 0; i < locations.length; i++) {
-                const location = locations[i];
-                // extract tags for contains function
-                const locationTags = location.tags.map(tag => tag.name);
-                let found = false;
-                for (let j = 0; j < tagArray.length; j++) {
-                    const tag = tagArray[j];
-                    if (contains(locationTags, tag)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (found) {
-                    results.push(location);
-                }
-            }
-        }
-        return results;
+    filterLocationsByTags: function (locations, tagArray) {
+        return locations
+            .filter(loc => loc.tags.map(t => t.name)
+            .some(t => tagArray.indexOf(t) >= 0))
+            .map(loc => loc.id);
     },
 }
 
 export const routesAPI = {
-    /**
-     * Sends async API request to api.digitransit.fi for
-     * pre-calculated route options from point a to b.
-     * Can be configured to ignore walk-only routes.
-     * Sorts the routes by travel duration by default.
-     * 
-     * @param {Position} fromPosition Start position.
-     * @param {Position} toPosition Destination position.
-     * 
-     * @returns {Array} Collection of routes. In case of
-     *      error returns false.
-     */
-    getRoutesToBarAsync: async function (fromPosition, toPosition, ignoreWalkRoutes=false) {
+    getRoutesToBarAsync: async function (fromPosition, toPosition) {
         try {
-            // Create request body
             graphQl.options.body = graphQl.getRouteToDest(fromPosition, toPosition, 3);
-            
-            // Send request and process the response
             const response = await fetch(DIGITRANSIT_URL, graphQl.options);
-            const routes = (await response.json()).data.plan.itineraries;
-            return ignoreWalkRoutes ? routes.filter(r => r.modes[0] !== 'WALK') : routes;
+            return (await response.json()).data.plan.itineraries;
         } catch (error) {
             console.error(error);
             return false;
