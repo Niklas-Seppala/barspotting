@@ -141,6 +141,7 @@ export const map = {
 
     createLocations: function(locations, options, popupHTML) {
         const drawOptions = options ? options : this.markerOptions.default;
+
         locations.forEach(loc => {
             const marker = L.marker([loc.location.lat, loc.location.lon], drawOptions)
             .addTo(this.instance);
@@ -150,32 +151,13 @@ export const map = {
             }
             marker.locationId = loc.id;
 
-            marker.on('click', eArgs => {
-                if (map.instance.getZoom() >= 13) {
-                    map.instance.panTo(eArgs.target.getLatLng(), map.instance.moveViewOptions); // No zoom
-                } else {
-                    map.instance.setView(eArgs.target.getLatLng(), 13,
-                    map.instance.moveViewOptions);
-                }
-                if (map.user.marker) {
-                    map.user.marker.setOpacity(0.8);
-                    map.user.marker.setZIndexOffset(0);
-                }
-                eArgs.target.setOpacity(1);
-                eArgs.target.setZIndexOffset(100);
-                map.user.marker = marker;
-            });
+            marker.on('click', _ => setMarkerZoom(marker))
 
             marker.on('click', async _ => {
-
                 console.log('marker clicked')
-
                 this.clearRoutes();
-                const routePanel = document.querySelector('#route-panel');
-                if (routePanel.classList.contains('routes-up')) {
-                    routePanel.classList.add('routes-down');
-                    routePanel.classList.remove('routes-up')
-                }
+                ui.toggleLocationPanel('down');
+
                 const routes = await routesAPI.getRoutesToBarAsync(this.user.position, loc.location);
                 if (routes) {
                     ui.renderRouteInstructions(routes, loc);
@@ -259,5 +241,20 @@ export const map = {
         this.layers.routes.addLayer(route);
         return this;
     }
+}
+
+function setMarkerZoom(marker) {
+    if (map.instance.getZoom() >= 13) {
+        map.instance.panTo(marker.getLatLng(), map.instance.moveViewOptions); // No zoom
+    } else {
+        map.instance.setView(marker.getLatLng(), 13,
+        map.instance.moveViewOptions);
+    }
+    if (map.user.marker) {
+        map.user.marker.setOpacity(0.8);
+        map.user.marker.setZIndexOffset(0);
+    }
+    marker.setOpacity(1);
+    marker.setZIndexOffset(100);
 }
 

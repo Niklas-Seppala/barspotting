@@ -16,7 +16,7 @@ window.onload = () => {
 
     Promise.all(fetchStaticData).then(data => {
         [bars, pizzas] = data;
-        map.createLocations(bars, map.markerOptions.bar, null);
+        map.createLocations(bars, map.markerOptions.bar);
         events.onLocationParamsChange();
     });
 }
@@ -33,6 +33,7 @@ export const events = {
 
     onLocationError: function(err) {
         alert(err.message);
+        
     },
 
     onLocateBtnClicked: function() {

@@ -16,8 +16,8 @@ const graphQl = {
      * Creates graphQL POST body for route query between
      * two positions. 
      * 
-     * @param {Position} fromPosition route start position.
-     * @param {Position} toPosition route target position.
+     * @param {object} fromPosition route start position.
+     * @param {object} toPosition route target position.
      * @param {number} resultCount query result count.
      * 
      * @returns {string} graphQL POST body as string.

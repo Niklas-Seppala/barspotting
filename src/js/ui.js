@@ -81,10 +81,7 @@ export const ui = {
     },
 
     renderRouteInstructions: function(routes, destination) {
-        const routePanel = document.querySelector('#route-panel');
-        routePanel.classList.add('routes-up');
-        routePanel.classList.remove('routes-down')
-
+        this.toggleLocationPanel('up');
         routes[0].legs.forEach(leg => {
             map.drawRoute(leg.legGeometry.points, map.routeDrawOptions[leg.mode]);
         });
@@ -92,5 +89,19 @@ export const ui = {
 
     renderError: function(err) {
         console.error(err);
+    },
+
+    toggleLocationPanel: function(direction) {
+        const routePanel = document.querySelector('#route-panel');
+        if (direction === 'up') {
+            routePanel.classList.add('routes-up');
+            routePanel.classList.remove('routes-down')
+        } else if (direction === 'down') {
+            if (routePanel.classList.contains('routes-up')) {
+                routePanel.classList.add('routes-down');
+                routePanel.classList.remove('routes-up')
+            }
+        }
     }
+
 }
