@@ -15,6 +15,7 @@ export const ui = {
         'SUBWAY': 'Metro',
         'TRAM': 'Tram',
         'RAIL': 'Train',
+        'FERRY': 'Ferry'
     },
     locationTags: {
         types : [
@@ -51,7 +52,20 @@ export const ui = {
 
         const routePanelBtn = document.querySelector('#route-panel-btn');
         const routePanel = document.querySelector('#route-panel');
+        const closeRouteBtn = document.querySelector('#close-route-btn');
 
+        closeRouteBtn.addEventListener('click', _ => {
+            _.target.classList.add('hidden');
+            const barInfoPanel = document.querySelector('#bar-info');
+            const routeInstructionsList = document.querySelector('#route-instructions');
+
+            routeInstructionsList.classList.add('hidden');
+            barInfoPanel.classList.remove('hidden');
+
+            document.querySelectorAll('.active-route').forEach(x => {
+                x.classList.remove('active-route');
+            });
+        });
 
         routePanelBtn.addEventListener('click', _ => {
             routePanel.classList.toggle('routes-down');
@@ -89,27 +103,35 @@ export const ui = {
     renderBarInfo: function(bar, routes, loc) {
         this.toggleLocationPanel('up');
         const routeList = document.querySelector('#route-list');
-        routeList.innerHTML = '';
+
+        const closeRouteBtn = document.querySelector('#close-route-btn');
+        closeRouteBtn.classList.add('hidden');
+
         const routeInstructionsList = document.querySelector('#route-instructions');
-        routeInstructionsList.innerHTML = '';
+
         routeInstructionsList.classList.add('hidden');
 
         const routePanel = document.querySelector('#route-panel');
 
         const barInfoPanel = document.querySelector('#bar-info');
+        barInfoPanel.classList.remove('hidden');
         const barName = document.querySelector('#bar-name');
         const barDescription = document.querySelector('#bar-description');
         barName.innerText = bar.title;
         barDescription.innerText = bar._description.body;
-        
-        routePanel.appendChild(barInfoPanel);
+
 
         this.renderRouteList(routes, loc);
     },
-    renderRouteList: function(routes, destination) {
+    renderRouteList: function(routes, destination, exclude=null) {
         const routeList = document.querySelector('#route-list');
-        console.log(routes);
-        routes.forEach(route => {
+        const routeListSection = document.querySelector("#route-list section");
+
+        document.querySelectorAll(".route").forEach(x => {
+            x.remove();
+        });
+        routes.forEach((route) => {
+
             const firstLeg = route.legs[0];
             const lastLeg = route.legs[route.legs.length-1];
 
@@ -122,24 +144,45 @@ export const ui = {
             const travelModes = route.legs.map(leg => this.modes[leg.mode]).join(", ");
 
             const routeItem = document.createElement('li');
-
+            routeItem.classList.add('route');
             routeItem.innerHTML = `
                 <span>
                     <time>${durationString}</time>
                     <span>${travelModes}</span>
                 </span>
             `;
-            routeList.appendChild(routeItem);
+            routeListSection.appendChild(routeItem);
 
-            routeItem.addEventListener('click', (evt) => {this.renderRoute(route)});
+            routeItem.addEventListener('click', (evt) => {this.renderRoute(route, evt)});
+
         });
     },
-    renderRoute: function(route) {
+    renderRoute: function(route, evt=null) {
+        const closeRouteBtn = document.querySelector('#close-route-btn');
+        closeRouteBtn.classList.remove('hidden');
+        if (evt != null) {
+            const routeItem = evt.target;
+            document.querySelectorAll('.active-route').forEach(x => {
+                x.classList.remove('active-route');
+            });
+
+            if(!routeItem.classList.contains('active-route')) {
+                routeItem.classList.add('active-route');
+            }
+        }
+
+        map.clearRoutes();
+        document.querySelectorAll(".route-leg").forEach(x => {
+            x.remove();
+        });
+
+        const barInfoPanel = document.querySelector('#bar-info');
+        barInfoPanel.classList.add("hidden");
         const routeInstructionsList = document.querySelector('#route-instructions');
-        routeInstructionsList.innerHTML = "";
+
+
         routeInstructionsList.classList.remove("hidden");
         route.legs.forEach(leg => {
-            console.log(leg);
             const distance = calculateDistance(leg.from.lat, leg.from.lon, leg.to.lat, leg.from.lon);
 
             let distanceString = `${(distance/1000).toFixed(2)}km`;
@@ -165,6 +208,7 @@ export const ui = {
 
 
             const legItem = document.createElement("li");
+            legItem.classList.add('route-leg');
 
             const duration = timeDiff(leg.startTime, leg.endTime);
 

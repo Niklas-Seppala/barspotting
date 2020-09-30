@@ -64,6 +64,11 @@ h1 {
     display: flex;
 }
 
+#route-list li {
+    cursor: pointer;
+}
+
+
 /* PANEL ANIMATIONS */
 .panel-up { animation: slide-up .5s ease normal forwards; }
 .panel-down { animation: slide-down .5s ease normal forwards; }
@@ -201,14 +206,35 @@ h1 {
     margin-bottom: 0.4em;
 }
 
+
+.route {
+
+}
+
+.active-route {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.route-leg {
+
+}
+
+
 #map {
     position: relative;
 }
 
-#bar-info {
+#bar-description {
     height: 100px;
     overflow: scroll;
 }
+
+#route-instructions, #route-list section {
+    overflow: scroll;
+    height: 75px;
+}
+
+
 
 #route-panel {
     height: 250px;
