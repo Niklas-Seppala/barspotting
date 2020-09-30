@@ -205,7 +205,10 @@ h1 {
     position: relative;
 }
 
-
+#bar-info {
+    height: 100px;
+    overflow: scroll;
+}
 
 #route-panel {
     height: 250px;
@@ -214,6 +217,8 @@ h1 {
     bottom: -290px;
     background: #0d192499;
     width: 100%;
+    padding-left: 1em;
+    box-sizing: border-box;
 }
 
 #route-panel-btn {

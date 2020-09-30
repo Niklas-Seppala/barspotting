@@ -65,3 +65,30 @@ export const events = {
         });
     },
 }
+
+/**
+* Utility function to get difference in two Unix timestamps
+* 
+* @param {Number} time1 timestamp of the starting time
+* @param {Number} time2 timestamp of the ending time
+* 
+* @returns {Array} the time difference in hours and minutes
+*/
+export function timeDiff(time1, time2) {
+    let time1date = new Date(time1);
+    let time2date = new Date(time2);
+
+    let startHours = time1date.getHours();
+    let startMinutes = time1date.getMinutes();
+
+    let endHours = time2date.getHours();
+    let endMinutes = time2date.getMinutes();
+
+
+    let diffMilliseconds = time2date - time1date;
+
+    let diffHours = Math.floor((diffMilliseconds % 86400000) / 3600000);
+    let diffMinutes = Math.round(((diffMilliseconds % 86400000) % 3600000) / 60000);
+
+    return [diffHours, diffMinutes];
+}

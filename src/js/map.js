@@ -142,8 +142,15 @@ export const map = {
     createLocations: function(locations, options, popupHTML) {
         const drawOptions = options ? options : this.markerOptions.default;
 
+        console.log(drawOptions, locations)
+        let barOptions = {...drawOptions};
         locations.forEach(loc => {
-            const marker = L.marker([loc.location.lat, loc.location.lon], drawOptions)
+
+            barOptions.title = loc.name.fi;
+            barOptions._description = loc.description;
+            barOptions._infoUrl = loc.info_url;
+
+            const marker = L.marker([loc.location.lat, loc.location.lon], barOptions)
             .addTo(this.instance);
 
             if (popupHTML) {
@@ -154,13 +161,13 @@ export const map = {
             marker.on('click', _ => setMarkerZoom(marker))
 
             marker.on('click', async _ => {
-                console.log('marker clicked')
+                console.log('marker clicked', marker)
                 this.clearRoutes();
                 ui.toggleLocationPanel('down');
 
                 const routes = await routesAPI.getRoutesToBarAsync(this.user.position, loc.location);
                 if (routes) {
-                    ui.renderRouteInstructions(routes, loc);
+                    ui.renderBarInfo(marker.options, routes, loc);
                 } else {
                     ui.renderError('no routes');
                 }
@@ -242,6 +249,29 @@ export const map = {
         return this;
     }
 }
+
+/**
+* Calculates the distance in meters between two coordinate points
+*
+* @param {Number} lat1 latitude coordinate of the first point
+* @param {Number} long1 longitude coordinate of the first point
+* @param {Number} lat2 latitude coordinate of the second point 
+* @param {Number} long2 longitude coordinate of the second point
+*
+* @returns {Number} the distance between the two points in meters
+*/
+export function calculateDistance(lat1, long1, lat2, long2) {
+    let latRad1 = lat1 / (180/Math.PI);
+    let longRad1 = long1 / (180/Math.PI);
+    let latRad2 = lat2 / (180/Math.PI);
+    let longRad2 = long2 / (180/Math.PI);
+
+    let distance = 3963.0 * Math.acos(
+        (Math.sin(latRad1) * Math.sin(latRad2)) + Math.cos(latRad1) * Math.cos(latRad2) * Math.cos(longRad2 - longRad2)
+    ) * 1.609344 * 1000;
+
+    return distance;
+};
 
 function setMarkerZoom(marker) {
     if (map.instance.getZoom() >= 13) {
