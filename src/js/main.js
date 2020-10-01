@@ -2,7 +2,7 @@
 
 import { map } from "./map.js";
 import { ui } from "./ui.js"
-import { locationAPI, routesAPI } from "./data.js";
+import { locationAPI } from "./data.js";
 
 let bars, pizzas;
 let locateTogle = true;
@@ -16,7 +16,8 @@ window.onload = () => {
 
     Promise.all(fetchStaticData).then(data => {
         [bars, pizzas] = data;
-        events.onLocationParamsChange()
+        map.createLocations(bars, map.markerOptions.bar);
+        events.onLocationParamsChange();
     });
 }
 
@@ -28,11 +29,11 @@ export const events = {
             map.focus();
             locateTogle = false;
         }
-
     },
 
     onLocationError: function(err) {
         alert(err.message);
+        
     },
 
     onLocateBtnClicked: function() {
@@ -43,62 +44,51 @@ export const events = {
         }
     },
 
-    /**
-     * This eventhandler should be called when something changes
-     * that should impact on the bars and pizzaplaces
-     * displayed to user.
-     * For example:
-     *      User changes range parameter on the UI =>
-     *      This function processes location data with changed
-     *      parameters (range) and calls UI module to render
-     *      changes to screen.
-     *
-     *      Same principle is applied to any user made changes on the UI
-     *      that impact location data.
-     *
-     * NOTE! walkRoute-checkbox impacts routes, not location data!
-     */
     onLocationParamsChange: function () {
         if (map.layers.locations) {
             map.clearLocationMarkers();
         }
-        const filteredBars = locationAPI.filterLocationsByTags(bars, ui.locationTags.styles
+        const filteredBarIds = locationAPI.filterLocationsByTags(bars, ui.locationTags.styles
             .concat(ui.locationTags.types)
             .filter(tag => tag.include)
             .map(tag => tag.tag)
-            .flat(), ui.locationTags.exclusive);
-
-        // let destinationGotFiltered = Boolean(currentDestination);
+            .flat());
         
-        filteredBars.forEach(loc => {
-
-            // Check if users selected destination got filtered
-            // if (currentDestination && location.id === currentDestination.id) {
-            //     destinationGotFiltered = false;
-            // }
-            // const html = map.createLocationHTML(loc);
-            map.setMarker(map.newPos(loc.location.lat, loc.location.lon), loc,
-                map.markerOptions.bar, null, null); //appEvents.onlocationMarkerClicked
+        filteredBarIds.forEach(id => {
+            const len = map.markerPool.locations.length;
+            for (let i = 0; i < len; i++) {
+                const m = map.markerPool.locations[i];
+                if (m.locationId === id) {
+                    map.layers.locations.addLayer(m);
+                }
+            }
         });
-
-        // if (userCtrValues.includePizzas) {
-        //     const pizzasCloseBy = locationAPI.getLocationsByPos(pizzas, userLocation, userCtrValues.rangeInKm);
-        //     pizzasCloseBy.forEach(location => {
-        //         // Check if users selected destination got filtered
-        //         if (currentDestination && location.id === currentDestination.id) {
-        //             destinationGotFiltered = false;
-        //         }
-        //         map.setMarker(new Position(location.location.lat, location.location.lon),
-        //             location, map.markerOptions.pizza, null, appEvents.onlocationMarkerClicked);
-        //     });
-        // }
-        // if (destinationGotFiltered) {
-        //     ui.renderRouteInstructions([], null)
-        //     currentDestination = null;
-        // }
     },
 }
 
+/**
+* Utility function to get difference in two Unix timestamps
+* 
+* @param {Number} time1 timestamp of the starting time
+* @param {Number} time2 timestamp of the ending time
+* 
+* @returns {Array} the time difference in hours and minutes
+*/
+export function timeDiff(time1, time2) {
+    let time1date = new Date(time1);
+    let time2date = new Date(time2);
+
+    let startHours = time1date.getHours();
+    let startMinutes = time1date.getMinutes();
+
+    let endHours = time2date.getHours();
+    let endMinutes = time2date.getMinutes();
 
 
+    let diffMilliseconds = time2date - time1date;
 
+    let diffHours = Math.floor((diffMilliseconds % 86400000) / 3600000);
+    let diffMinutes = Math.round(((diffMilliseconds % 86400000) % 3600000) / 60000);
+
+    return [diffHours, diffMinutes];
+}

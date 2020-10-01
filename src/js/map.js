@@ -1,14 +1,9 @@
 'use strict'
 
-/**
- * Container object to functions and
- * constant data related to map state
- * manipulation.
- * 
- * All functions support function call chaining.
- */
-export const map = {
+import { routesAPI } from "./data.js";
+import { ui } from "./ui.js";
 
+export const map = {
     user: {
         position: null,
         marker: null,
@@ -20,26 +15,22 @@ export const map = {
         locations: new L.FeatureGroup()
     },
 
+    markerPool: {
+        locations: [],
+        routes: []
+    },
+
     newPos: function (latitude, longitude) {
         return {lat: latitude, lon: longitude}
     },
 
-    /**
-     * Map movement animation options
-     * object. DON'T CHANGE THE STATE!
-     */
     moveViewOptions: {
         animate: true,
         duration: 0.6,
         easeLinearity: 0.25,
         noMoveStart: true
-    }, 
+    },
 
-    /**
-     * Map marker style options. Use these when you want
-     * to set markers with pre-defined styles
-     * to map. DON'T CHANGE THE STATES!
-     */
     markerOptions: {
         default: {
             title : 'title here',
@@ -52,7 +43,7 @@ export const map = {
                 iconUrl: './icons/beer-icon.png',
                 iconSize: [40, 45],
                 iconAnchor: [20, 40],
-                popupAnchor:[4, -80]
+                popupAnchor:[0, -40]
             }),
             title : 'Kalja rafla',
             alt: 'alt comes here',
@@ -64,7 +55,7 @@ export const map = {
                 iconUrl: './icons/pizza-icon.png',
                 iconSize: [40, 45],
                 iconAnchor: [20, 40],
-                popupAnchor: [4, -80]
+                popupAnchor: [0, -40]
             }),
             title : 'pizzeria',
             alt: 'alt comes here',
@@ -148,6 +139,43 @@ export const map = {
         return this;
     },
 
+    createLocations: function(locations, options, popupHTML) {
+        const drawOptions = options ? options : this.markerOptions.default;
+
+        console.log(drawOptions, locations)
+        let barOptions = {...drawOptions};
+        locations.forEach(loc => {
+
+            barOptions.title = loc.name.fi;
+            barOptions._description = loc.description;
+            barOptions._infoUrl = loc.info_url;
+
+            const marker = L.marker([loc.location.lat, loc.location.lon], barOptions)
+            .addTo(this.instance);
+
+            if (popupHTML) {
+                marker.bindPopup(popupHTML);
+            }
+            marker.locationId = loc.id;
+
+            marker.on('click', _ => setMarkerZoom(marker))
+
+            marker.on('click', async _ => {
+                console.log('marker clicked', marker)
+                this.clearRoutes();
+                ui.toggleLocationPanel('down');
+
+                const routes = await routesAPI.getRoutesToBarAsync(this.user.position, loc.location);
+                if (routes) {
+                    ui.renderBarInfo(marker.options, routes, loc);
+                } else {
+                    ui.renderError('no routes');
+                }
+            })
+            this.markerPool.locations.push(marker);
+        });
+    },
+
     focus: function() {
         this.instance.setView([
             this.user.position.lat, this.user.position.lon
@@ -194,125 +222,69 @@ export const map = {
      * Refreshes user's marker to new position.
      */
     refreshUserLocationMarker: function () {
-        return this.clearUserLocationMarker().SetUserMarker();
-    },
-
-    /**
-     * Creates and sets marker to map. Adds the created marker
-     * to marker layer group. If marker options are not provided,
-     * default options are used. Include popupHTML parameter if
-     * you wish to include popup to map marker.
-     * 
-     * @param {Position} markerPos marker latlon object.
-     * @param {object} location location object 
-     * @param {object} options marker style options
-     * @param {string} popupHTML popup's HTML string
-     * @param {Function} onClick click eventHandler function,
-     *      uses earlier location and position parameters.
-     */
-    setMarker: function (markerPos, location, options, popupHTML=null, onClick=null) {
-        const drawOptions = options ? options : this.markerOptions.default;
-        const marker = L.marker([markerPos.lat, markerPos.lon], drawOptions).addTo(this.instance);
-        if (popupHTML) {
-            marker.bindPopup(popupHTML, {
-                maxHeight: 350,
-                maxWidth: 200,
-                autoPan: true,
-                closeOnClick: true
-            });
-        }
-        if (onClick) {
-            setMarkerClickEvent(marker, markerPos, location, onClick);
-        }
-        this.layers.locations.addLayer(marker);
-        return this;
-    },
-
-    /**
-     * Creates and sets user's location marker to map.
-     * Marker style options are pre-defined user options.
-     * Include popupHTML parameter if you wish to add popup
-     * to marker.
-     * 
-     * @param {string} popupHTML popup's HTML string
-     * @param {Function} onClick click eventhandler function
-     * 
-     */
-    SetUserMarker: function (popupHTML=null, onClick=null) {
+        this.clearUserLocationMarker();
         this.user.marker = L.marker(this.user.position, this.markerOptions.user)
-            .addTo(this.instance);
-        if (popupHTML) {
-            this.user.marker.bindPopup(popupHTML)
-        }
-        if (onClick) {
-            this.user.marker.on('click', _ => {
-                onClick.call(this.user.marker);
-            });
-        }
+        this.user.marker.addTo(this.instance);
         return this;
     },
 
-    createLocationHTML: function(location) { //${openHours}
-        return `
-<section class="popup">
-    <a href="${location.info_url}"><h2>${location.name.fi}</h2></a>
-    <span class="address">${`${location.location.address.street_address} ${location.location.address.locality}`}</span>
-    <span class="schedule"></span>
-    <a href="sadsad"></a>
-    <p class="desc">
-        ${location.description.body}
-    </p>
-    ${location.description.images.length > 0 ? `<img src="${location.description.images[0].url}" alt="">` : ''}
-</section>`
+    createLocationHTML: function(location) {
+        return `<h3>${location.name.fi}</h3>`
     },
 
-    // /**
-    //  * Draws route polyline to map. Adds route to route layer group.
-    //  * If draw options are not provided in parameters, polyline
-    //  * is drawn using default options.
-    //  * 
-    //  * @param {string} points encoded google polyline string
-    //  * @param {object} drawOptions polyline style options
-    //  * 
-    //  */
-    // drawRoute: function (points, drawOptions) {
-    //     const options = drawOptions ? drawOptions : routeDrawOptions.default;
-    //     const route = L.polyline(polyline.decode(points), options);
-    //     route.addTo(mapObject);
-    //     routes.addLayer(route);
-    //     return this;
-    // }
+    /**
+     * Draws route polyline to map. Adds route to route layer group.
+     * If draw options are not provided in parameters, polyline
+     * is drawn using default options.
+     * 
+     * @param {string} points encoded google polyline string
+     * @param {object} drawOptions polyline style options
+     * 
+     */
+    drawRoute: function (points, drawOptions) {
+        const options = drawOptions ? drawOptions : this.routeDrawOptions.DEFAULT;
+        const route = L.polyline(polyline.decode(points), options);
+        route.addTo(this.instance);
+        this.layers.routes.addLayer(route);
+        return this;
+    }
 }
-
 
 /**
- * Sets marker click event. When marker is clicked,
- * map moves on top of that marker and zooms in smoothly.
- * Marker is also highlighted, and raised to the top on Z-axis.
- * 
- * @param {object} marker marker object.
- * @param {Position} position marker's Position object.
- * @param {object} location location object.
- * @param {Function} onClick eventhandler function.
- */
-function setMarkerClickEvent(marker, position, location, onClick) {
-    marker.on('click', eArgs => {
-        if (map.instance.getZoom() >= 13) {
-            map.instance.panTo(eArgs.target.getLatLng(), map.instance.moveViewOptions); // No zoom
-        } else {
-            map.instance.setView(eArgs.target.getLatLng(), 13,
-            map.instance.moveViewOptions);
-        }
-        if (map.user.marker) {
-            map.user.marker.setOpacity(0.8);
-            map.user.marker.setZIndexOffset(0);
-        }
-        eArgs.target.setOpacity(1);
-        eArgs.target.setZIndexOffset(100);
-        map.user.marker = marker;
+* Calculates the distance in meters between two coordinate points
+*
+* @param {Number} lat1 latitude coordinate of the first point
+* @param {Number} long1 longitude coordinate of the first point
+* @param {Number} lat2 latitude coordinate of the second point 
+* @param {Number} long2 longitude coordinate of the second point
+*
+* @returns {Number} the distance between the two points in meters
+*/
+export function calculateDistance(lat1, long1, lat2, long2) {
+    let latRad1 = lat1 / (180/Math.PI);
+    let longRad1 = long1 / (180/Math.PI);
+    let latRad2 = lat2 / (180/Math.PI);
+    let longRad2 = long2 / (180/Math.PI);
 
-        if (onClick) {
-            onClick.call(null, ...[position, location]);
-        }
-    });
+    let distance = 3963.0 * Math.acos(
+        (Math.sin(latRad1) * Math.sin(latRad2)) + Math.cos(latRad1) * Math.cos(latRad2) * Math.cos(longRad2 - longRad2)
+    ) * 1.609344 * 1000;
+
+    return distance;
+};
+
+function setMarkerZoom(marker) {
+    if (map.instance.getZoom() >= 13) {
+        map.instance.panTo(marker.getLatLng(), map.instance.moveViewOptions); // No zoom
+    } else {
+        map.instance.setView(marker.getLatLng(), 13,
+        map.instance.moveViewOptions);
+    }
+    if (map.user.marker) {
+        map.user.marker.setOpacity(0.8);
+        map.user.marker.setZIndexOffset(0);
+    }
+    marker.setOpacity(1);
+    marker.setZIndexOffset(100);
 }
+
