@@ -92,3 +92,22 @@ export function timeDiff(time1, time2) {
 
     return [diffHours, diffMinutes];
 }
+
+/**
+* Utility function to render an Unix timestamp as a human readable string (HH:MM)
+* 
+* @param {Number} timeStamp Unix timestamp
+* 
+* @returns {String} the time as a human readable string
+*/
+export function formatTime(timeStamp) {
+    // evil oneliner to pad with zeroes
+    const d = (x) => x<10 ? "0"+x : x;
+
+    const date = new Date(timeStamp);
+
+    const hours = date.getHours();
+    const minutes = date.getMinutes()
+
+    return `${d(hours)}:${d(minutes)}`;
+}

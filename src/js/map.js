@@ -247,6 +247,22 @@ export const map = {
         route.addTo(this.instance);
         this.layers.routes.addLayer(route);
         return this;
+    },
+    /**
+    * Draws circles for the stops on the map
+    *
+    * @param {Array} latitude and longitude as an array 
+    */
+    drawRouteStop: function(latLng) {
+
+        const circle = L.circle(
+            latLng, {radius: 20}
+        ).addTo(
+        this.instance
+        );
+        this.layers.routes.addLayer(circle);
+
+        return this;
     }
 }
 

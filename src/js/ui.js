@@ -1,6 +1,6 @@
 'use strict'
 
-import { events, timeDiff } from "./main.js";
+import { events, formatTime, timeDiff } from "./main.js";
 import { map, calculateDistance } from "./map.js";
 
 export const ui = {
@@ -55,12 +55,13 @@ export const ui = {
         const closeRouteBtn = document.querySelector('#close-route-btn');
 
         closeRouteBtn.addEventListener('click', _ => {
-            _.target.classList.add('hidden');
+            console.log(_.target.id);
+            this.setElemVisibility("#"+_.target.id, false);
             const barInfoPanel = document.querySelector('#bar-info');
             const routeInstructionsList = document.querySelector('#route-instructions');
 
-            routeInstructionsList.classList.add('hidden');
-            barInfoPanel.classList.remove('hidden');
+            this.setElemVisibility(routeInstructionsList, false);
+            this.setElemVisibility(barInfoPanel, true);
 
             document.querySelectorAll('.active-route').forEach(x => {
                 x.classList.remove('active-route');
@@ -100,24 +101,30 @@ export const ui = {
             })
         }
     },
+    setElemVisibility: function(selector, visible) {
+        if (visible == true) {
+            document.querySelector(selector).classList.remove('hidden');
+        } else {
+            document.querySelector(selector).classList.add('hidden');
+        }
+    },
     renderBarInfo: function(bar, routes, loc) {
         this.toggleLocationPanel('up');
-        const routeList = document.querySelector('#route-list');
 
-        const closeRouteBtn = document.querySelector('#close-route-btn');
-        closeRouteBtn.classList.add('hidden');
 
-        const routeInstructionsList = document.querySelector('#route-instructions');
+        this.setElemVisibility('#close-route-btn', false);
 
-        routeInstructionsList.classList.add('hidden');
+        this.setElemVisibility('#route-instructions', false);
 
         const routePanel = document.querySelector('#route-panel');
 
-        const barInfoPanel = document.querySelector('#bar-info');
-        barInfoPanel.classList.remove('hidden');
+
+        this.setElemVisibility('#bar-info', true);
         const barName = document.querySelector('#bar-name');
+        const barLink = document.querySelector('#bar-link');
         const barDescription = document.querySelector('#bar-description');
         barName.innerText = bar.title;
+        barLink.href = bar._infoUrl;
         barDescription.innerText = bar._description.body;
 
 
@@ -135,6 +142,13 @@ export const ui = {
             const firstLeg = route.legs[0];
             const lastLeg = route.legs[route.legs.length-1];
 
+            // evil oneliner to pad with zeroes
+            const d = (x) => x<10 ? "0"+x : x;
+
+            const startTimeString = formatTime(firstLeg.startTime);
+            const endTimeString = formatTime(lastLeg.endTime);
+
+
             const duration = timeDiff(firstLeg.startTime, lastLeg.endTime);
             let durationString = `${duration[1]}min`;
             if (duration[0] > 0) {
@@ -147,7 +161,7 @@ export const ui = {
             routeItem.classList.add('route');
             routeItem.innerHTML = `
                 <span>
-                    <time>${durationString}</time>
+                    <time>${startTimeString} - ${endTimeString} (${durationString})</time>
                     <span>${travelModes}</span>
                 </span>
             `;
@@ -158,16 +172,16 @@ export const ui = {
         });
     },
     renderRoute: function(route, evt=null) {
-        const closeRouteBtn = document.querySelector('#close-route-btn');
-        closeRouteBtn.classList.remove('hidden');
+
+        this.setElemVisibility('#close-route-btn', true);
         if (evt != null) {
             const routeItem = evt.target;
             document.querySelectorAll('.active-route').forEach(x => {
                 x.classList.remove('active-route');
             });
 
-            if(!routeItem.classList.contains('active-route')) {
-                routeItem.classList.add('active-route');
+            if(!routeItem.parentElement.classList.contains('active-route')) {
+                routeItem.parentElement.classList.add('active-route');
             }
         }
 
@@ -177,37 +191,34 @@ export const ui = {
         });
 
         const barInfoPanel = document.querySelector('#bar-info');
-        barInfoPanel.classList.add("hidden");
+        barInfoPanel.classList.add('hidden');
         const routeInstructionsList = document.querySelector('#route-instructions');
 
-
-        routeInstructionsList.classList.remove("hidden");
+        console.log(route);
+        routeInstructionsList.classList.remove('hidden');
         route.legs.forEach(leg => {
-            const distance = calculateDistance(leg.from.lat, leg.from.lon, leg.to.lat, leg.from.lon);
+            let routeStringParts = [];
 
-            let distanceString = `${(distance/1000).toFixed(2)}km`;
+            const startTimeString = formatTime(leg.startTime);
+            const endTimeString = formatTime(leg.endTime);
 
-            if (distance < 1000) {
-                distanceString = `${(distance).toFixed(0)}m`;
+            routeStringParts.push(startTimeString);
+            routeStringParts.push(endTimeString);
+
+            routeStringParts.push(`${this.modes[leg.mode]} to ${leg.to.name}`);
+
+            if (leg.mode == "WALK") {
+                const distance = calculateDistance(leg.from.lat, leg.from.lon, leg.to.lat, leg.from.lon);
+                let distanceString = `${(distance/1000).toFixed(2)}km`;
+    
+                if (distance < 1000) {
+                    distanceString = `${(distance).toFixed(0)}m`;
+                }
+
+                routeStringParts.push(distanceString)
             }
 
-            // evil oneliner to pad with zeroes
-            const d = (x) => x<10 ? "0"+x : x;
-
-            const startTimeDate = new Date(leg.startTime);
-            const endTimeDate = new Date(leg.endTime);
-
-            const startHours = startTimeDate.getHours();
-            const startMinutes = endTimeDate.getMinutes()
-
-            const endHours = endTimeDate.getHours();
-            const endMinutes = endTimeDate.getMinutes();
-
-            const startTimeString = `${d(startHours)}:${d(startMinutes)}`;
-            const endTimeString = `${d(endHours)}:${d(endMinutes)}`;
-
-
-            const legItem = document.createElement("li");
+            const legItem = document.createElement('li');
             legItem.classList.add('route-leg');
 
             const duration = timeDiff(leg.startTime, leg.endTime);
@@ -216,14 +227,40 @@ export const ui = {
             if (duration[0] > 0) {
                 durationString = `${duration[0]}h ` + durationString;
             }
+            routeStringParts.push(durationString);
+
+            let stopAmountString = ``;
+            if (leg.intermediateStops.length > 0) {
+                stopAmountString = `${leg.intermediateStops.length} stops`;
+                routeStringParts.push(stopAmountString);
+            }
+            else if (leg.intermediateStops.length == 1) {
+                stopAmountString = `1 stop`;
+                routeStringParts.push(stopAmountString); 
+            }
+
             legItem.innerHTML = `
             <span>
                 <time>${startTimeString}</time>
-                ${this.modes[leg.mode]} to ${leg.to.name} (${distanceString} - ${durationString})
+                ${routeStringParts.join(" - ")}
             </span>`;
             routeInstructionsList.appendChild(legItem);
             map.drawRoute(leg.legGeometry.points, map.routeDrawOptions[leg.mode]);
+
+            map.drawRouteStop([leg.from.lat, leg.from.lon]);
+
+            legItem.addEventListener('click', evt => {this.zoomOnLeg(leg);});
+
         });
+    },
+    zoomOnLeg(leg) {
+        console.log("zoom",map.instance.getZoom());
+        if (map.instance.getZoom() >= 20) {
+            map.instance.panTo([leg.from.lat, leg.from.lon], map.instance.moveViewOptions); // No zoom
+        } else {
+            map.instance.setView([leg.from.lat, leg.from.lon], 20,
+            map.instance.moveViewOptions);
+        }
     },
     renderError: function(err) {
         console.error(err);
