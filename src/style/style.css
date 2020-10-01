@@ -92,6 +92,7 @@ h1 {
     background-color: #2c597e;
     margin-left: 5px;
     margin-right: 5px;
+    cursor: pointer;
 }
 .btn:hover {
     background: linear-gradient(0deg, rgba(44,89,126,1) 0%, rgb(79, 130, 172) 100%);
@@ -216,7 +217,7 @@ h1 {
 }
 
 .route-leg {
-
+    cursor: pointer;
 }
 
 
@@ -225,15 +226,22 @@ h1 {
 }
 
 #bar-description {
-    height: 100px;
-    overflow: scroll;
+    max-height: 100px;
+    overflow-y: scroll;
 }
 
 #route-instructions, #route-list section {
-    overflow: scroll;
+    overflow-y: scroll;
     height: 75px;
 }
 
+#route-list section {
+    margin-left: 5px;
+}
+
+#bar-description, #route-instructions, #route-list section {
+    border-bottom: 1px solid #EDFCFA;
+}
 
 
 #route-panel {
@@ -245,6 +253,12 @@ h1 {
     width: 100%;
     padding-left: 1em;
     box-sizing: border-box;
+}
+
+#close-route-btn {
+    width: 25%;
+    margin-bottom: 1em;
+    cursor: pointer;
 }
 
 #route-panel-btn {
