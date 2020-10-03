@@ -143,7 +143,6 @@ export const map = {
     createLocations: function(locations, options, popupHTML) {
         const drawOptions = options ? options : this.markerOptions.default;
 
-        console.log(drawOptions, locations)
         let barOptions = {...drawOptions};
         locations.forEach(loc => {
 
@@ -152,17 +151,17 @@ export const map = {
             barOptions._infoUrl = loc.info_url;
 
             const marker = L.marker([loc.location.lat, loc.location.lon], barOptions)
-            .addTo(this.instance);
+                .addTo(this.instance);
 
             if (popupHTML) {
                 marker.bindPopup(popupHTML);
             }
+
             marker.locationId = loc.id;
 
             marker.on('click', _ => setMarkerZoom(marker))
 
             marker.on('click', async _ => {
-                console.log('marker clicked', marker)
                 this.clearRoutes();
                 ui.toggleLocationPanel('down');
 
@@ -181,6 +180,40 @@ export const map = {
         this.instance.setView([
             this.user.position.lat, this.user.position.lon
         ], 13);
+    },
+
+    locations: {
+        cache: [],
+        areHidden: function () { return this.cache.length > 0; },
+
+        clear: function() {
+            map.layers.locations.clearLayers();
+        },
+
+        onlyDisplayFocused: function(id) {
+            // Cache all markers
+            for (const key in map.layers.locations._layers) {
+                if (map.layers.locations._layers.hasOwnProperty(key)) {
+                    map.locations.cache.push(map.layers.locations._layers[key]);
+                }
+            }
+            // Empty the map
+            map.clearLocationMarkers();
+            
+            // Find the focused marker
+            const m = map.markerPool.locations.find(l => l.locationId === id);
+            
+            // add the marker to map layer.
+            map.layers.locations.addLayer(m);
+        },
+
+        displayAll: function() {
+            this.clear();
+            this.cache.forEach(marker => {
+                map.layers.locations.addLayer(marker);
+            })
+            this.cache.length = 0;
+        }
     },
 
     /**

@@ -46,7 +46,7 @@ export const events = {
 
     onLocationParamsChange: function () {
         if (map.layers.locations) {
-            map.clearLocationMarkers();
+            map.locations.clear();
         }
         const filteredBarIds = locationAPI.filterLocationsByTags(bars, ui.locationTags.styles
             .concat(ui.locationTags.types)
