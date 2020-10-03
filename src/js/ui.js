@@ -48,7 +48,7 @@ export const ui = {
             }
             settingsBar.classList.toggle('panel-down');
             settingsBar.classList.toggle('panel-up');
-        })
+        });
 
         const routePanelBtn = document.querySelector('#route-panel-btn');
         const routePanel = document.querySelector('#route-panel');
@@ -57,15 +57,14 @@ export const ui = {
         closeRouteBtn.addEventListener('click', _ => {
             console.log(_.target.id);
             this.setElemVisibility("#"+_.target.id, false);
-            const barInfoPanel = document.querySelector('#bar-info');
-            const routeInstructionsList = document.querySelector('#route-instructions');
 
-            this.setElemVisibility(routeInstructionsList, false);
-            this.setElemVisibility(barInfoPanel, true);
+            this.setElemVisibility('#route-instructions', false);
+            this.setElemVisibility('#bar-info', true);
 
             document.querySelectorAll('.active-route').forEach(x => {
                 x.classList.remove('active-route');
             });
+            map.clearRoutes();
         });
 
         routePanelBtn.addEventListener('click', _ => {
