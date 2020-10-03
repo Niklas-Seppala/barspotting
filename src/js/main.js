@@ -50,9 +50,9 @@ export const events = {
             .flat());
         
         filteredBarIds.forEach(id => {
-            const len = map.markerPool.locations.length;
+            const len = map.locations.markerPool.length;
             for (let i = 0; i < len; i++) {
-                const m = map.markerPool.locations[i];
+                const m = map.locations.markerPool[i];
                 if (m.locationId === id) {
                     map.layers.locations.addLayer(m);
                 }

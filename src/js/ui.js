@@ -56,7 +56,7 @@ export const ui = {
 
         closeRouteBtn.addEventListener('click', _ => {
             if (map.locations.areHidden()) {
-                map.locations.displayAll();
+                map.locations.popCacheToMap();
             }
 
             this.setElemVisibility("#"+_.target.id, false);
@@ -72,7 +72,7 @@ export const ui = {
 
         routePanelBtn.addEventListener('click', _ => {
             if (map.locations.areHidden()) {
-                map.locations.displayAll();
+                map.locations.popCacheToMap();
             }
             routePanel.classList.toggle('routes-down');
             map.clearRoutes();

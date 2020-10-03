@@ -17,11 +17,6 @@ export const map = {
         locations: new L.FeatureGroup()
     },
 
-    markerPool: {
-        locations: [],
-        routes: []
-    },
-
     newPos: function (latitude, longitude) {
         return {lat: latitude, lon: longitude}
     },
@@ -173,7 +168,7 @@ export const map = {
                     ui.renderError('no routes');
                 }
             })
-            this.markerPool.locations.push(marker);
+            this.locations.markerPool.push(marker);
         });
     },
 
@@ -183,37 +178,68 @@ export const map = {
         ], 13);
     },
 
+    /**
+     * Location object to house functions and data
+     * related to locations on the map.
+     */
     locations: {
+
+        /**
+         * Object pool for leaflet marker
+         * objects. When the objects are first
+         * created, they are to be stored here.
+         */
+        markerPool: [],
+
+        /**
+         * Cache for temporarely cleared locations
+         */
         cache: [],
+
+        /**
+         * Check if any locations are hidden.
+         * @returns {boolean}
+         */
         areHidden: function () { return this.cache.length > 0; },
 
+        /**
+         * Clear all locations from the map.
+         */
         clear: function() {
             map.layers.locations.clearLayers();
         },
 
+        /**
+         * Removes all other markers than the marker with
+         * provided id from the map. Removed markers are cached for
+         * future use.
+         * @param {number} id marker id that remains visible.
+         */
         onlyDisplayFocused: function(id) {
-            // Cache all markers
+            // Cache all the markers currently displayed
             for (const key in map.layers.locations._layers) {
                 if (map.layers.locations._layers.hasOwnProperty(key)) {
-                    map.locations.cache.push(map.layers.locations._layers[key]);
+                    this.cache.push(map.layers.locations._layers[key]);
                 }
             }
-            // Empty the map
+            // Empty the map from all markers
             this.clear();
             
             // Find the focused marker
-            const m = map.markerPool.locations.find(l => l.locationId === id);
+            const focused = this.markerPool.find(l => l.locationId === id);
             
             // add the marker to map layer.
-            map.layers.locations.addLayer(m);
+            map.layers.locations.addLayer(focused);
         },
 
-        displayAll: function() {
-            this.clear();
-            this.cache.forEach(marker => {
-                map.layers.locations.addLayer(marker);
-            })
-            this.cache.length = 0;
+        /**
+         * Adds all markers in the cache to the
+         * map. Clears cache.
+         */
+        popCacheToMap: function() {
+            this.clear(); // clear the map
+            this.cache.forEach(marker => map.layers.locations.addLayer(marker));
+            this.cache.length = 0; // empty the cache
         }
     },
 
