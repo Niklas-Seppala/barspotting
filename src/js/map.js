@@ -2,6 +2,7 @@
 
 import { routesAPI } from "./data.js";
 import { ui } from "./ui.js";
+import { polyline } from "./polyline.js";
 
 export const map = {
     user: {
