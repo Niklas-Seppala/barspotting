@@ -9,6 +9,7 @@ export const map = {
         position: null,
         marker: null,
     },
+
     instance: null,
 
     layers: {
@@ -198,7 +199,7 @@ export const map = {
                 }
             }
             // Empty the map
-            map.clearLocationMarkers();
+            this.clear();
             
             // Find the focused marker
             const m = map.markerPool.locations.find(l => l.locationId === id);
@@ -214,14 +215,6 @@ export const map = {
             })
             this.cache.length = 0;
         }
-    },
-
-    /**
-    * Clears marker layer from the map.
-    */
-    clearLocationMarkers: function () {
-        this.layers.locations.clearLayers();
-        return this;
     },
 
     /**

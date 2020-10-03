@@ -33,15 +33,10 @@ export const events = {
 
     onLocationError: function(err) {
         alert(err.message);
-        
     },
 
     onLocateBtnClicked: function() {
-        try {
-            map.setView(map.user.position);
-        } catch (error) {
-            alert(error.message)
-        }
+        map.setView(map.user.position);
     },
 
     onLocationParamsChange: function () {
