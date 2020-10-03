@@ -19,7 +19,7 @@ export const ui = {
     },
     locationTags: {
         types : [
-            { tag: 'Bar', uiStr: 'Baari', include: true },
+            { tag: ['Bar', 'BARS & NIGHTLIFE'], uiStr: 'Baari', include: true },
             { tag: ['Nightclub', 'Club'] , uiStr: 'Yökerho', include: true },
             { tag: 'Cafe', uiStr: 'Kahvila', include: true },
             { tag: 'Pub', uiStr: 'Pubi', include: true },
