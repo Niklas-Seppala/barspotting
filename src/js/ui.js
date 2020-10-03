@@ -106,6 +106,13 @@ export const ui = {
             document.querySelector(selector).classList.add('hidden');
         }
     },
+    showLoadingSpinner: function() {
+        this.setElemVisibility('#spinner', true);
+    },
+    hideLoadingSpinner: function() {
+        this.setElemVisibility('#spinner', false);
+    },
+
     renderBarInfo: function(bar, routes, loc) {
         this.toggleLocationPanel('up');
 

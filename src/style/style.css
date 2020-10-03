@@ -220,6 +220,28 @@ h1 {
     cursor: pointer;
 }
 
+#spinner {
+    font-size: 25px;
+    font-family: 'Righteous', cursive;
+    width: 200px;
+    height: 200px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -100px;
+    margin-top: -100px;
+    z-index: 2000;
+
+    animation-name: spin;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-direction: alternate;
+    background-color: #1f425f;
+    border-radius: 100px;
+    text-align: center;
+    line-height: 200px;
+}
 
 #map {
     position: relative;
@@ -227,12 +249,12 @@ h1 {
 
 #bar-description {
     max-height: 100px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #route-instructions, #route-list section {
-    overflow-y: scroll;
-    height: 75px;
+    overflow-y: auto;
+    height: 50px;
 }
 
 #route-list section {
@@ -277,6 +299,29 @@ h1 {
     100% { bottom: -290px; }
 }
 
+@keyframes spin {
+    0% {
+        transform:rotate(0deg);
+    }
+    16.6% {
+        transform:rotate(30deg);
+    }
+    33.3% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(-30deg);
+    }
+    66.6% {
+        transform: rotate(0deg);
+    }
+    83.3% {
+        transform: rotate(30deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
 
 
 .hidden {

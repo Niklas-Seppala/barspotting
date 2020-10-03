@@ -10,6 +10,7 @@ let locateTogle = true;
 window.onload = () => {
     const fetchStaticData = [locationAPI.getNightlifeAsync(), locationAPI.getPizzaAsync()];
     ui.init();
+    ui.showLoadingSpinner();
     map.create('map');
     map.instance.on('locationfound', events.onLocationFound);
     map.instance.on('locationerror', events.onLocationError);
@@ -18,6 +19,7 @@ window.onload = () => {
         [bars, pizzas] = data;
         map.createLocations(bars, map.markerOptions.bar);
         events.onLocationParamsChange();
+        ui.hideLoadingSpinner();
     });
 }
 
@@ -32,7 +34,7 @@ export const events = {
     },
 
     onLocationError: function(err) {
-        alert(err.message);
+        console.log(err,err.message);
         
     },
 

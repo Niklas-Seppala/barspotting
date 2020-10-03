@@ -137,16 +137,17 @@ export const map = {
         this.instance.locate({watch: true, timeout: 5000, setView: false});
         this.instance.addLayer(this.layers.locations);
         this.instance.addLayer(this.layers.routes);
+
         return this;
     },
 
     createLocations: function(locations, options, popupHTML) {
         const drawOptions = options ? options : this.markerOptions.default;
 
-        console.log(drawOptions, locations)
-        let barOptions = {...drawOptions};
-        locations.forEach(loc => {
 
+        let barOptions = {...drawOptions};
+
+        locations.forEach(loc => {
             barOptions.title = loc.name.fi;
             barOptions._description = loc.description;
             barOptions._infoUrl = loc.info_url;
@@ -166,7 +167,9 @@ export const map = {
                 this.clearRoutes();
                 ui.toggleLocationPanel('down');
 
+                ui.showLoadingSpinner();
                 const routes = await routesAPI.getRoutesToBarAsync(this.user.position, loc.location);
+                ui.hideLoadingSpinner();
                 if (routes) {
                     ui.renderBarInfo(marker.options, routes, loc);
                 } else {
