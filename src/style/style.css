@@ -3,8 +3,8 @@ body {
     margin: 0;
     position: relative;
     color: #EDFCFA;
-    /* font-family: 'Krona One', sans-serif; */
     font-family: monospace;
+    overflow: hidden;
 }
 a {
     color: inherit;
@@ -51,30 +51,34 @@ h1 {
 #settings-panel {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-evenly;
+    justify-content: center;
+    align-items: center;
     position: absolute;
-    top: -464px;
-    height: 510px;
+    top: -230px;
+    height: 300px;
     width: 100%;
     background: #0d192499;
 }
 
 #tag-selection {
     display: flex;
-    flex-direction: column;
 }
+
+#route-list li {
+    cursor: pointer;
+}
+
 
 /* PANEL ANIMATIONS */
 .panel-up { animation: slide-up .5s ease normal forwards; }
 .panel-down { animation: slide-down .5s ease normal forwards; }
 @keyframes slide-up {
-    0% { top: 20px; }
-    100% { top: -464px; }
+    0% { top: 40px; }
+    100% { top: -230px; }
 }
 @keyframes slide-down {
-    0% { top: -464px; }
-    100% { top: 20px;}
+    0% { top: -230px; }
+    100% { top: 40px;}
 }
 /*******************************/
 
@@ -88,6 +92,7 @@ h1 {
     background-color: #2c597e;
     margin-left: 5px;
     margin-right: 5px;
+    cursor: pointer;
 }
 .btn:hover {
     background: linear-gradient(0deg, rgba(44,89,126,1) 0%, rgb(79, 130, 172) 100%);
@@ -117,6 +122,7 @@ h1 {
 }
 .text-input > input {
     height: 1.6em;
+    width: 11.8em;
     font-size: 18px;
     border-radius: 7px;
     border-color: #235d8d;
@@ -200,6 +206,78 @@ h1 {
 .popup > h2 {
     margin-bottom: 0.4em;
 }
+
+
+.route {
+
+}
+
+.active-route {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.route-leg {
+    cursor: pointer;
+}
+
+
+#map {
+    position: relative;
+}
+
+#bar-description {
+    max-height: 100px;
+    overflow-y: scroll;
+}
+
+#route-instructions, #route-list section {
+    overflow-y: scroll;
+    height: 75px;
+}
+
+#route-list section {
+    margin-left: 5px;
+}
+
+#bar-description, #route-instructions, #route-list section {
+    border-bottom: 1px solid #EDFCFA;
+}
+
+
+#route-panel {
+    height: 250px;
+    position: absolute;
+    z-index: 1001;
+    bottom: -290px;
+    background: #0d192499;
+    width: 100%;
+    padding-left: 1em;
+    box-sizing: border-box;
+}
+
+#close-route-btn {
+    width: 25%;
+    margin-bottom: 1em;
+    cursor: pointer;
+}
+
+#route-panel-btn {
+    position: absolute;
+    right: -4px;
+}
+.routes-up { animation: slide-routes-up .5s ease normal forwards; }
+.routes-down { animation: slide-routes-down .5s ease normal forwards; }
+
+@keyframes slide-routes-up {
+    0% { bottom: -290px; }
+    100% { bottom: 0px; }
+}
+@keyframes slide-routes-down {
+    0% { bottom: 0px; }
+    100% { bottom: -290px; }
+}
+
+
 
 .hidden {
     display: none;

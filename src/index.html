@@ -16,9 +16,6 @@
     integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
     crossorigin=""></script>
 
-    <!-- polyline -->
-    <script src="https://unpkg.com/polyline@0.2.0/src/polyline.js"></script>
-
     <!-- app styles -->
     <link rel="stylesheet" href="./style/style.css">
 
@@ -43,7 +40,7 @@
             </div>
 
             <div id="tag-selection">
-                <div class="slider-checkbox" id="exclusive-tags"><input type="checkbox"><label class="label">Poissulkeva haku</label></div>
+                <!-- <div class="slider-checkbox" id="exclusive-tags"><input type="checkbox"><label class="label">Poissulkeva</label></div> -->
                 <div>
                     <ul class="tags " id="tag-types">
                         <li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Baari</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Yökerho</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Kahvila</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Pubi</label></div></li>
@@ -61,6 +58,25 @@
 
     <main>
         <div id="map"></div>
+        <section id="route-panel">
+            <div class="btn" id="route-panel-btn">
+                <img src="./icons/close-icon.png" alt="routes">
+            </div>
+
+            <article id="bar-info">
+                <h3 id="bar-name"></h3>
+                <h4><a id="bar-link" target="_blank" href="#">Bar's home page</a></h4>
+                <p id="bar-description"></p>
+            </article>
+            <ul id="route-list">
+                <span class="btn" id="close-route-btn">Go back</span>
+                <section>
+                    
+                </section>
+            </ul>
+            <ul class="hidden" id="route-instructions">
+            </ul>
+        </section>
     </main>
     
     <!-- app javascript -->
