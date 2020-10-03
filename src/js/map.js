@@ -183,7 +183,6 @@ export const map = {
      * related to locations on the map.
      */
     locations: {
-
         /**
          * Object pool for leaflet marker
          * objects. When the objects are first
@@ -200,7 +199,7 @@ export const map = {
          * Check if any locations are hidden.
          * @returns {boolean}
          */
-        areHidden: function () { return this.cache.length > 0; },
+        areHidden: function () { return map.locations.cache.length > 0; },
 
         /**
          * Clear all locations from the map.
@@ -219,16 +218,11 @@ export const map = {
             // Cache all the markers currently displayed
             for (const key in map.layers.locations._layers) {
                 if (map.layers.locations._layers.hasOwnProperty(key)) {
-                    this.cache.push(map.layers.locations._layers[key]);
+                    map.locations.cache.push(map.layers.locations._layers[key])
                 }
             }
-            // Empty the map from all markers
-            this.clear();
-            
-            // Find the focused marker
+            map.locations.clear();
             const focused = this.markerPool.find(l => l.locationId === id);
-            
-            // add the marker to map layer.
             map.layers.locations.addLayer(focused);
         },
 
@@ -237,9 +231,11 @@ export const map = {
          * map. Clears cache.
          */
         popCacheToMap: function() {
-            this.clear(); // clear the map
-            this.cache.forEach(marker => map.layers.locations.addLayer(marker));
-            this.cache.length = 0; // empty the cache
+            map.locations.clear();
+            map.locations.cache.forEach(m => {
+                map.layers.locations.addLayer(m);
+            })
+            map.locations.cache.length = 0;
         }
     },
 
