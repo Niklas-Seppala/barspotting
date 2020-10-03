@@ -55,6 +55,10 @@ export const ui = {
         const closeRouteBtn = document.querySelector('#close-route-btn');
 
         closeRouteBtn.addEventListener('click', _ => {
+            if (map.locations.areHidden()) {
+                map.locations.popCacheToMap();
+            }
+
             this.setElemVisibility("#"+_.target.id, false);
 
             this.setElemVisibility('#route-instructions', false);
@@ -67,6 +71,9 @@ export const ui = {
         });
 
         routePanelBtn.addEventListener('click', _ => {
+            if (map.locations.areHidden()) {
+                map.locations.popCacheToMap();
+            }
             routePanel.classList.toggle('routes-down');
             map.clearRoutes();
         });
@@ -99,6 +106,7 @@ export const ui = {
             })
         }
     },
+
     setElemVisibility: function(selector, visible) {
         if (visible == true) {
             document.querySelector(selector).classList.remove('hidden');
@@ -106,16 +114,15 @@ export const ui = {
             document.querySelector(selector).classList.add('hidden');
         }
     },
+
     renderBarInfo: function(bar, routes, loc) {
         this.toggleLocationPanel('up');
-
 
         this.setElemVisibility('#close-route-btn', false);
 
         this.setElemVisibility('#route-instructions', false);
 
         const routePanel = document.querySelector('#route-panel');
-
 
         this.setElemVisibility('#bar-info', true);
         const barName = document.querySelector('#bar-name');
@@ -125,9 +132,9 @@ export const ui = {
         barLink.href = bar._infoUrl;
         barDescription.innerText = bar._description.body;
 
-
         this.renderRouteList(routes, loc);
     },
+
     renderRouteList: function(routes, destination, exclude=null) {
         const routeList = document.querySelector('#route-list');
         const routeListSection = document.querySelector("#route-list section");
@@ -166,12 +173,14 @@ export const ui = {
             routeListSection.appendChild(routeItem);
 
             routeItem.addEventListener('click', (evt) => {
-                this.renderRoute(route, evt);
+                this.renderRoute(route, destination, evt);
             });
 
         });
     },
-    renderRoute: function(route, evt=null) {
+    renderRoute: function(route, destination, evt=null) {
+
+        map.locations.onlyDisplayFocused(destination.id);
 
         this.setElemVisibility('#close-route-btn', true);
         if (evt != null) {

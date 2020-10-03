@@ -33,20 +33,15 @@ export const events = {
 
     onLocationError: function(err) {
         alert(err.message);
-        
     },
 
     onLocateBtnClicked: function() {
-        try {
-            map.setView(map.user.position);
-        } catch (error) {
-            alert(error.message)
-        }
+        map.setView(map.user.position);
     },
 
     onLocationParamsChange: function () {
         if (map.layers.locations) {
-            map.clearLocationMarkers();
+            map.locations.clear();
         }
         const filteredBarIds = locationAPI.filterLocationsByTags(bars, ui.locationTags.styles
             .concat(ui.locationTags.types)
@@ -55,9 +50,9 @@ export const events = {
             .flat());
         
         filteredBarIds.forEach(id => {
-            const len = map.markerPool.locations.length;
+            const len = map.locations.markerPool.length;
             for (let i = 0; i < len; i++) {
-                const m = map.markerPool.locations[i];
+                const m = map.locations.markerPool[i];
                 if (m.locationId === id) {
                     map.layers.locations.addLayer(m);
                 }
