@@ -144,7 +144,7 @@ export const map = {
          * objects. When the objects are first
          * created, they are to be stored here.
          */
-        _markerPool: [],
+        _markerPool: {},
 
         /**
          * Cache for temporarely cleared locations.
@@ -194,7 +194,7 @@ export const map = {
                         ui.renderError('no routes');
                     }
                 })
-                this._markerPool.push(marker);
+                this._markerPool[marker.locationId] = marker;
             });
         },
 
@@ -209,7 +209,7 @@ export const map = {
          * Removes all other markers than the marker with
          * provided id from the map. Removed markers are cached for
          * future use.
-         * @param {number} id marker id that remains visible.
+         * @param {string} id marker id that remains visible.
          */
         onlyDisplayFocused: function(id) {
             // Cache all the markers currently displayed
@@ -219,8 +219,10 @@ export const map = {
                 }
             }
             map.locations.clear();
-            const focused = this._markerPool.find(l => l.locationId === id);
-            map._layers.locations.addLayer(focused);
+            if (this._markerPool.hasOwnProperty(id)) {
+                const focused = this._markerPool[id];
+                map._layers.locations.addLayer(focused);
+            }
         },
 
         /**

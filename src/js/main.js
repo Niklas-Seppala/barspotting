@@ -57,13 +57,7 @@ export const events = {
             .flat());
         
         filteredBarIds.forEach(id => {
-            const len = map.locations._markerPool.length;
-            for (let i = 0; i < len; i++) {
-                const m = map.locations._markerPool[i];
-                if (m.locationId === id) {
-                    map._layers.locations.addLayer(m);
-                }
-            }
+            map._layers.locations.addLayer(map.locations._markerPool[id])
         });
     },
 }
