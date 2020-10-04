@@ -139,6 +139,12 @@ export const map = {
      * Namespace to manipulate location markers in the map.
      */
     locations: {
+
+        /**
+         * 
+         */
+        focusGroup : new L.FeatureGroup(),
+
         /**
          * Object pool for leaflet marker
          * objects. When the objects are first
@@ -212,16 +218,22 @@ export const map = {
          * @param {string} id marker id that remains visible.
          */
         onlyDisplayFocused: function(id) {
-            // Cache all the markers currently displayed
-            for (const key in map._layers.locations._layers) {
-                if (map._layers.locations._layers.hasOwnProperty(key)) {
-                    map.locations._cache.push(map._layers.locations._layers[key])
-                }
-            }
+            this.cache();
             map.locations.clear();
             if (this._markerPool.hasOwnProperty(id)) {
                 const focused = this._markerPool[id];
                 map._layers.locations.addLayer(focused);
+            }
+        },
+
+        /**
+         * 
+         */
+        cache: function() {
+            for (const key in map._layers.locations._layers) {
+                if (map._layers.locations._layers.hasOwnProperty(key)) {
+                    map.locations._cache.push(map._layers.locations._layers[key])
+                }
             }
         },
 
@@ -280,15 +292,29 @@ export const map = {
      * Namespace to manipulate map view.
      */
     view: {
+
         /**
-         * Options object to specify how the view
-         * change animation plays out.
+         * 
          */
-        moveOptions: {
-            animate: true,
-            duration: 0.6,
-            easeLinearity: 0.25,
-            noMoveStart: true
+        options: {
+            /**
+             * 
+             */
+            bounds: {
+                padding: [2,2],
+                maxZoom: 16
+            },
+
+            /**
+             * Options object to specify how the view
+             * change animation plays out.
+             */
+            move: {
+                animate: true,
+                duration: 0.6,
+                easeLinearity: 0.25,
+                noMoveStart: true
+            }
         },
 
         /**
@@ -300,7 +326,7 @@ export const map = {
          * @param {number} zoomLevel defaults to 13
          */
         setTo: function(position, options, zoomLevel=13) {
-            const mOptions = options ? options : this.moveOptions;
+            const mOptions = options ? options : this.options.move;
             map._instance.setView(position, zoomLevel, mOptions);
         },
 
@@ -332,6 +358,16 @@ export const map = {
             } else {
                 this.setTo(position, options, zoomLevel)
             }
+        },
+
+        /**
+         * 
+         * @param {*} bounds 
+         * @param {*} boundOptions 
+         */
+        fitBounds: function(bounds, boundOptions) {
+            const options = boundOptions ? boundOptions : this.options.bounds;
+            map._instance.fitBounds(bounds, options)
         }
     },
 

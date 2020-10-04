@@ -120,6 +120,19 @@ export const locationAPI = {
             .some(t => tagArray.indexOf(t) >= 0))
             .map(loc => loc.id);
     },
+    
+    /**
+     * 
+     * @param {Array} locations 
+     * @param {string} name 
+     */
+    filterLocationsByName: function(locations, name) {
+        name = name.toUpperCase();
+        return locations.filter(loc =>
+            loc.name.fi.toUpperCase().includes(name)
+         || loc.name.fi.toUpperCase().startsWith(name))
+            .map(loc => loc.id);
+    }
 }
 
 export const routesAPI = {

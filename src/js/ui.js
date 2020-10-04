@@ -105,6 +105,16 @@ export const ui = {
                 events.onLocationParamsChange();
             })
         }
+
+        const searchBtn = document.querySelector('#search-btn');
+        const searchInput = document.querySelector('#search-input');
+        searchBtn.addEventListener('click', e => {
+            const query = searchInput.value;
+            if (query) {
+                events.locationSearch(query);
+                this.toggleLocationPanel('down');
+            }
+        });
     },
 
     setElemVisibility: function(selector, visible) {
