@@ -55,7 +55,7 @@ export const ui = {
         const closeRouteBtn = document.querySelector('#close-route-btn');
 
         closeRouteBtn.addEventListener('click', _ => {
-            if (map.locations.areHidden()) {
+            if (map.locations.anyHidden()) {
                 map.locations.popCacheToMap();
             }
 
@@ -67,15 +67,15 @@ export const ui = {
             document.querySelectorAll('.active-route').forEach(x => {
                 x.classList.remove('active-route');
             });
-            map.clearRoutes();
+            map.routes.clear();
         });
 
         routePanelBtn.addEventListener('click', _ => {
-            if (map.locations.areHidden()) {
+            if (map.locations.anyHidden()) {
                 map.locations.popCacheToMap();
             }
             routePanel.classList.toggle('routes-down');
-            map.clearRoutes();
+            map.routes.clear();
         });
 
         // locate button
@@ -195,7 +195,7 @@ export const ui = {
             }
         }
 
-        map.clearRoutes();
+        map.routes.clear();
         document.querySelectorAll(".route-leg").forEach(x => {
             x.remove();
         });
@@ -255,22 +255,15 @@ export const ui = {
                 ${routeStringParts.join(" - ")}
             </span>`;
             routeInstructionsList.appendChild(legItem);
-            map.drawRoute(leg.legGeometry.points, map.routeDrawOptions[leg.mode]);
+            
+            map.routes.draw(leg, map.options.routes[leg.mode], true);
 
-            map.drawRouteStop([leg.from.lat, leg.from.lon]);
-
-            legItem.addEventListener('click', evt => {this.zoomOnLeg(leg);});
-
+            legItem.addEventListener('click', _ => {
+                map.view.zoomTo([leg.from.lat, leg.from.lon], 16, 17);
+            });
         });
     },
-    zoomOnLeg(leg) {
-        if (map.instance.getZoom() >= 20) {
-            map.instance.panTo([leg.from.lat, leg.from.lon], map.instance.moveViewOptions); // No zoom
-        } else {
-            map.instance.setView([leg.from.lat, leg.from.lon], 20,
-            map.instance.moveViewOptions);
-        }
-    },
+    
     renderError: function(err) {
         console.error(err);
     },

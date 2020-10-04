@@ -10,24 +10,31 @@ let locateTogle = true;
 window.onload = () => {
     const fetchStaticData = [locationAPI.getNightlifeAsync(), locationAPI.getPizzaAsync()];
     ui.init();
+
     map.create('map');
-    map.instance.on('locationfound', events.onLocationFound);
-    map.instance.on('locationerror', events.onLocationError);
+    map.gps.on('found', events.onLocationFound);
+    map.gps.on('error', events.onLocationError);
 
     Promise.all(fetchStaticData).then(data => {
         [bars, pizzas] = data;
-        map.createLocations(bars, map.markerOptions.bar);
+        map.locations.create(bars, map.options.markers.bar);
         events.onLocationParamsChange();
     });
 }
 
 export const events = {
     onLocationFound: function(position) {
-        map.user.position = map.newPos(position.latlng.lat, position.latlng.lng) ;
-        map.refreshUserLocationMarker();
+
+        // Update user's position
+        map.user.position = map.newPos(position.latlng.lat, position.latlng.lng);
+
         if (locateTogle) {
-            map.focus();
+            // Only run the first time
+            map.user.marker.create();
+            map.view.focus(); // because of this. // TODO: make more sense of this
             locateTogle = false;
+        } else {
+            map.user.marker.move(map.user.position);
         }
     },
 
@@ -36,11 +43,11 @@ export const events = {
     },
 
     onLocateBtnClicked: function() {
-        map.setView(map.user.position);
+        map.view.focus();
     },
 
     onLocationParamsChange: function () {
-        if (map.layers.locations) {
+        if (map._layers.locations) {
             map.locations.clear();
         }
         const filteredBarIds = locationAPI.filterLocationsByTags(bars, ui.locationTags.styles
@@ -50,11 +57,11 @@ export const events = {
             .flat());
         
         filteredBarIds.forEach(id => {
-            const len = map.locations.markerPool.length;
+            const len = map.locations._markerPool.length;
             for (let i = 0; i < len; i++) {
-                const m = map.locations.markerPool[i];
+                const m = map.locations._markerPool[i];
                 if (m.locationId === id) {
-                    map.layers.locations.addLayer(m);
+                    map._layers.locations.addLayer(m);
                 }
             }
         });
