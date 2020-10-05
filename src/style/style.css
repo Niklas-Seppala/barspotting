@@ -206,11 +206,11 @@ h1 {
 
 #bar-description {
     max-height: 100px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #route-instructions, #route-list section {
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 75px;
 }
 
