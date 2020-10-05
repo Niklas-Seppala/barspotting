@@ -39,15 +39,24 @@ export const ui = {
     init: function() {
         // set menu slider click events
         const menuBtn = document.querySelector('#settings-panel-button');
+        const expandIcon = menuBtn.querySelector('img');
         const settingsBar = document.querySelector('#settings-panel');
         menuBtn.addEventListener('click', _ => {
             if (!settingsBar.classList.contains('panel-down') &&
                 !settingsBar.classList.contains('panel-up')) {
                     settingsBar.classList.add('panel-down');
-                    return;
+            } else {
+                settingsBar.classList.toggle('panel-down');
+                settingsBar.classList.toggle('panel-up');
             }
-            settingsBar.classList.toggle('panel-down');
-            settingsBar.classList.toggle('panel-up');
+
+            if (!expandIcon.classList.contains('expand') &&
+                !expandIcon.classList.contains('de-expand')) {
+                    expandIcon.classList.add('expand');
+            } else {
+                expandIcon.classList.toggle('expand');
+                expandIcon.classList.toggle('de-expand');
+            }
         });
 
         const routePanelBtn = document.querySelector('#route-panel-btn');
@@ -107,7 +116,17 @@ export const ui = {
         }
 
         const searchBtn = document.querySelector('#search-btn');
+        const clearSearchBtn = document.querySelector('#clear-search-btn')
         const searchInput = document.querySelector('#search-input');
+
+        clearSearchBtn.addEventListener('click', e => {
+            this.clearSearchBar();
+            if (map.locations.anyHidden()) {
+                console.log(map.locations._cache)
+                map.locations.popCacheToMap();
+            }
+        });
+
         searchBtn.addEventListener('click', e => {
             const query = searchInput.value;
             if (query) {
@@ -276,6 +295,11 @@ export const ui = {
     
     renderError: function(err) {
         console.error(err);
+    },
+
+    clearSearchBar: function() {
+        const searchInput = document.querySelector('#search-input');
+        searchInput.value = '';
     },
 
     toggleLocationPanel: function(direction) {
