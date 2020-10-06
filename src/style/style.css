@@ -113,22 +113,6 @@ h1 {
     transform: translate(-50%);
 }
 /*******************************/
-.text-input {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 1px;
-}
-.text-input > input {
-    height: 1.6em;
-    width: 11.8em;
-    font-size: 18px;
-    border-radius: 7px;
-    border-color: #235d8d;
-    border-width: 2px;
-    background-color: #EDFCFA;
-}
 
 .slider-checkbox {
     /* font-size: 12px; */
@@ -207,11 +191,6 @@ h1 {
     margin-bottom: 0.4em;
 }
 
-
-.route {
-
-}
-
 .active-route {
     background-color: rgba(255, 255, 255, 0.3);
 }
@@ -227,11 +206,11 @@ h1 {
 
 #bar-description {
     max-height: 100px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #route-instructions, #route-list section {
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 75px;
 }
 
@@ -268,6 +247,13 @@ h1 {
 .routes-up { animation: slide-routes-up .5s ease normal forwards; }
 .routes-down { animation: slide-routes-down .5s ease normal forwards; }
 
+.expand {
+    animation: rotate-down .8s cubic-bezier(0.075, 0.82, 0.165, 1) normal forwards;
+}
+.de-expand {
+    animation: rotate-up .8s cubic-bezier(0.075, 0.82, 0.165, 1) normal forwards;
+}
+
 @keyframes slide-routes-up {
     0% { bottom: -290px; }
     100% { bottom: 0px; }
@@ -277,9 +263,60 @@ h1 {
     100% { bottom: -290px; }
 }
 
+@keyframes rotate-down {
+    0% {transform: rotate(0deg);}
+    100% { transform: rotate(-180deg); }
+}
+@keyframes rotate-up {
+    0% { transform: rotate(-180deg);}
+    100% { transform: rotate(0deg); }
+}
 
+.text-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 1px;
+}
+
+.text-input > input {
+    height: 1.6em;
+    width: 11.8em;
+    font-size: 18px;
+    border-color: #235d8d;
+    border-width: 2px;
+    background-color: #EDFCFA;
+}
+
+.search-btn {
+    background-color: #EDFCFA;
+    border-color: #235d8d;
+    border-width: 2px;
+    border-style: inset;
+    margin-left: 0px;
+    margin-right: 0px;
+    height: 30px;
+    padding: 0;
+    border-radius: 0;
+    border-left: unset;
+}
+.search-btn:hover {
+    background: linear-gradient(0deg, #EDFCFA 0%, #ffffff 100%);
+}
+
+.search-btn > img {
+    height: 20px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
 
 .hidden {
     display: none;
     /* visibility: collapse; */
+}
+
+#bar-info-header {
+    display: flex;
+    align-items: center;
 }

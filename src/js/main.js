@@ -46,6 +46,21 @@ export const events = {
         map.view.focus();
     },
 
+    locationSearch: function(query) {
+        if (map._layers.locations) {
+            map.locations.cache();
+            map.locations.clear();
+            map.locations.focusGroup.clearLayers();
+        }
+
+        const filteredIds = locationAPI.filterLocationsByName(bars, query);
+        filteredIds.forEach(id => {
+            map._layers.locations.addLayer(map.locations._markerPool[id]);
+            map.locations.focusGroup.addLayer(map.locations._markerPool[id]);
+        })
+        map.view.fitBounds(map.locations.focusGroup.getBounds());
+    },
+
     onLocationParamsChange: function () {
         if (map._layers.locations) {
             map.locations.clear();
