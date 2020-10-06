@@ -11,6 +11,7 @@ window.onload = () => {
     const fetchStaticData = [locationAPI.getNightlifeAsync(), locationAPI.getPizzaAsync()];
     ui.init();
 
+    ui.showLoadingSpinner();
     map.create('map');
     map.gps.on('found', events.onLocationFound);
     map.gps.on('error', events.onLocationError);
@@ -19,6 +20,7 @@ window.onload = () => {
         [bars, pizzas] = data;
         map.locations.create(bars, map.options.markers.bar);
         events.onLocationParamsChange();
+        ui.hideLoadingSpinner();
     });
 }
 
@@ -39,7 +41,7 @@ export const events = {
     },
 
     onLocationError: function(err) {
-        alert(err.message);
+        console(err, err.message);
     },
 
     onLocateBtnClicked: function() {
