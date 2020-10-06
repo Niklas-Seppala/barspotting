@@ -44,8 +44,8 @@ h1 {
     align-items: center;
     justify-content: space-between;
     background-color: #1f425f;
-    padding-bottom: 5px;
-    padding-top: 5px;
+    /* padding-bottom: 0px;
+    padding-top: 0px; */
 }
 
 #settings-panel {
@@ -54,7 +54,8 @@ h1 {
     justify-content: center;
     align-items: center;
     position: absolute;
-    top: -230px;
+    /* top: -230px; */
+    top: -245px;;
     height: 300px;
     width: 100%;
     background: #0d192499;
@@ -73,12 +74,12 @@ h1 {
 .panel-up { animation: slide-up .5s ease normal forwards; }
 .panel-down { animation: slide-down .5s ease normal forwards; }
 @keyframes slide-up {
-    0% { top: 40px; }
-    100% { top: -230px; }
+    0% { top: 25px; }
+    100% { top: -245px; }
 }
 @keyframes slide-down {
-    0% { top: -230px; }
-    100% { top: 40px;}
+    0% { top: -245px; }
+    100% { top: 25px;}
 }
 /*******************************/
 
@@ -391,8 +392,9 @@ h1 {
     padding: 2px;
     border-radius: 4px;
     position: absolute;
-    right: 0;
+    right: -3px;
 }
+
 #route-panel-btn > img {
     height: 18px;
 }

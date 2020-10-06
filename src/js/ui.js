@@ -165,7 +165,6 @@ export const ui = {
 
     renderRouteList: function(routes, destination, exclude=null) {
         const routeList = document.querySelector('#route-list');
-        const routeListSection = document.querySelector("#route-list section");
 
         document.querySelectorAll(".route").forEach(x => {
             x.remove();
@@ -198,7 +197,7 @@ export const ui = {
                     <span>${travelModes}</span>
                 </span>
             `;
-            routeListSection.appendChild(routeItem);
+            routeList.appendChild(routeItem);
 
             routeItem.addEventListener('click', (evt) => {
                 this.renderRoute(route, destination, evt);

@@ -41,7 +41,7 @@ export const events = {
     },
 
     onLocationError: function(err) {
-        console(err, err.message);
+        console.error(err.message);
     },
 
     onLocateBtnClicked: function() {

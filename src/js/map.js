@@ -50,10 +50,11 @@ export const map = {
             }
         ).addTo(this._instance);
 
-        this._instance.locate({watch: true, timeout: 5000, setView: false})
-            .addLayer(this._layers.locations)
+        this._instance.addLayer(this._layers.locations)
             .addLayer(this._layers.routes)
             .addLayer(this._layers.user);
+
+        this._instance.locate({watch: true, timeout: 5000, setView: false});
     },
 
     gps: {
