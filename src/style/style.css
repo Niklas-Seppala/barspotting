@@ -98,7 +98,7 @@ h1 {
     background: linear-gradient(0deg, rgba(44,89,126,1) 0%, rgb(79, 130, 172) 100%);
 }
 .btn > img {
-    height: 28px;
+    height: 24px;
 }
 .btn-container {
     display: flex;
@@ -205,8 +205,11 @@ h1 {
 }
 
 #bar-description {
-    max-height: 100px;
+    max-height: 140px;
     overflow-y: auto;
+    padding-left: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 #route-instructions, #route-list section {
@@ -230,7 +233,7 @@ h1 {
     bottom: -290px;
     background: #0d192499;
     width: 100%;
-    padding-left: 1em;
+    /* padding-left: 1em; */
     box-sizing: border-box;
 }
 
@@ -240,10 +243,7 @@ h1 {
     cursor: pointer;
 }
 
-#route-panel-btn {
-    position: absolute;
-    right: -4px;
-}
+
 .routes-up { animation: slide-routes-up .5s ease normal forwards; }
 .routes-down { animation: slide-routes-down .5s ease normal forwards; }
 
@@ -316,7 +316,36 @@ h1 {
     /* visibility: collapse; */
 }
 
+#bar-name {
+    font-family: 'Inconsolata', monospace;
+    font-size: 18px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+#bar-link {
+    display: flex;
+    align-items: center;
+}
+
+#bar-link > img {
+    height: 18px;
+    margin-left: 2px;
+}
+
 #bar-info-header {
     display: flex;
     align-items: center;
+    background-color: #1f425f;
+    justify-content: center;
+}
+
+#route-panel-btn {
+    padding: 2px;
+    border-radius: 4px;
+    position: absolute;
+    right: 0;
+}
+#route-panel-btn > img {
+    height: 18px;
 }

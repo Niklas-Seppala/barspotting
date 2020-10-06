@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>BARSPOTTING</title>
     <link href="https://fonts.googleapis.com/css2?family=Krona+One&family=Righteous&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&display=swap" rel="stylesheet">
 
     <!-- leaflet css -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -60,15 +61,16 @@
     <main>
         <div id="map"></div>
         <section id="route-panel">
-            <div class="btn" id="route-panel-btn">
-                <img src="./icons/close-light-icon.png" alt="routes">
-            </div>
+            
 
             <article id="bar-info">
                 <div id="bar-info-header">
-                    <h3 id="bar-name"></h3>
-                    <a id="bar-link" target="_blank" href="#"><div class="btn"><img src="./icons/link-light-icon.png" alt=""></div></a>
+                    <a id="bar-link" target="_blank" href="#"><h3 id="bar-name"></h3><img src="./icons/link-light-icon.png" alt=""></a>
+                    <div class="btn" id="route-panel-btn">
+                        <img src="./icons/close-light-icon.png" alt="routes">
+                    </div>
                 </div>
+                
 
                 <p id="bar-description"></p>
             </article>
