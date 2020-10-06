@@ -193,9 +193,11 @@ export const map = {
                     map.routes.clear();
                     ui.toggleLocationPanel('down');
 
+                    ui.showLoadingSpinner();
                     const routes = await routesAPI.getRoutesToBarAsync(map.user.position, loc.location);
                     if (routes) {
                         ui.renderBarInfo(marker.options, routes, loc);
+                        ui.hideLoadingSpinner();
                     } else {
                         ui.renderError('no routes');
                     }

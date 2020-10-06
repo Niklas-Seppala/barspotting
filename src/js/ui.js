@@ -135,7 +135,6 @@ export const ui = {
             }
         });
     },
-
     setElemVisibility: function(selector, visible) {
         if (visible == true) {
             document.querySelector(selector).classList.remove('hidden');
@@ -313,6 +312,11 @@ export const ui = {
                 routePanel.classList.remove('routes-up')
             }
         }
+    },
+    showLoadingSpinner: function() {
+     this.setElemVisibility('#spinner', true);
+    },
+    hideLoadingSpinner: function() {
+     this.setElemVisibility('#spinner', false);
     }
-
 }
