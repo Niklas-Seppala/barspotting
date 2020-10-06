@@ -30,7 +30,7 @@ export const polyline = {
      * @param {string} encodedStr 
      */
     decode: function(encodedStr) {
-        const coords = [];
+         const coords = [];
 
         let chunk, sum, leftShift, i, lat, lon;
         i = lat = lon = 0;
