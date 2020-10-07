@@ -38,7 +38,7 @@ export const map = {
      * @param {string} elemId element id of the element where the map will be located.
      */
     create: function (elemId) {
-        this._instance = L.map(elemId).fitWorld();
+        this._instance = L.map(elemId);
         L.tileLayer(
             'https://cdn.digitransit.fi/map/v1/hsl-map/{z}/{x}/{y}.png',
             {
@@ -50,10 +50,11 @@ export const map = {
             }
         ).addTo(this._instance);
 
-        this._instance.locate({watch: true, timeout: 5000, setView: false})
-            .addLayer(this._layers.locations)
+        this._instance.addLayer(this._layers.locations)
             .addLayer(this._layers.routes)
             .addLayer(this._layers.user);
+
+        this._instance.locate({watch: true, timeout: 5000, setView: false});
     },
 
     gps: {

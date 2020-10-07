@@ -4,24 +4,24 @@ import { map } from "./map.js";
 import { ui } from "./ui.js"
 import { locationAPI } from "./data.js";
 
-let bars, pizzas;
+let bars;
 let locateTogle = true;
 
-window.onload = () => {
-    const fetchStaticData = [locationAPI.getNightlifeAsync(), locationAPI.getPizzaAsync()];
+window.onload = async () => {
+    const fetchBars = locationAPI.getNightlifeAsync();
+    
     ui.init();
-
     ui.showLoadingSpinner();
+
     map.create('map');
+    map.view.setTo(map.newPos(60.160095, 24.942513));
     map.gps.on('found', events.onLocationFound);
     map.gps.on('error', events.onLocationError);
 
-    Promise.all(fetchStaticData).then(data => {
-        [bars, pizzas] = data;
-        map.locations.create(bars, map.options.markers.bar);
-        events.onLocationParamsChange();
-        ui.hideLoadingSpinner();
-    });
+    bars = await fetchBars;
+    map.locations.create(bars, map.options.markers.bar);
+    events.onLocationParamsChange();
+    ui.hideLoadingSpinner();
 }
 
 export const events = {
@@ -41,7 +41,7 @@ export const events = {
     },
 
     onLocationError: function(err) {
-        console(err, err.message);
+        console.error(err.message);
     },
 
     onLocateBtnClicked: function() {
@@ -90,13 +90,6 @@ export const events = {
 export function timeDiff(time1, time2) {
     let time1date = new Date(time1);
     let time2date = new Date(time2);
-
-    let startHours = time1date.getHours();
-    let startMinutes = time1date.getMinutes();
-
-    let endHours = time2date.getHours();
-    let endMinutes = time2date.getMinutes();
-
 
     let diffMilliseconds = time2date - time1date;
 
