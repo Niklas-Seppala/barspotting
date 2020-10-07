@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BARSPOTTING</title>
+    <link href="https://fonts.googleapis.com/css2?family=Krona+One&family=Righteous&display=swap" rel="stylesheet">
+
+    <!-- app styles -->
+    <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="./style/presentation.css">
+
+</head>
+<body>
+    <header>
+        <section id="menu-panel">
+            <h1>BARSPOTTING: Esittely</h1>
+            <div class="btn-container" id="menu-icons">
+                <div id="locate-user-btn" class="btn"><img src="./icons/marker-icon.png" alt="menu"></div>
+                <div class="btn"><img src="./icons/info-icon.png" alt="menu"></div>
+            </div>
+        </section>
+    </header>
+    <!-- 
+       <article>
+            <h2>Lorem</h2>
+            <figure>
+                <img src="https://www.placecage.com/500/200.jpg"/>
+            <figcaption>
+               Lorem ipsum
+            </figcaption>
+            </figure>
+        </article> 
+    -->
+
+    <!--
+    <article>
+        <h2>Lorem</h2>
+        <p>Lorem ipsum dolor sit amet</p>
+    </article> 
+    -->
+
+    <main>
+        <article>
+            <h2>Mistä sovellukseen?</h2>
+            <p><a href="./index.html">Täältä</a></p>
+        </article> 
+        <article>
+            <h2>Ryhmä 5</h2>
+            <figure>
+                <img src="https://www.placecage.com/500/200.jpg"/>
+                <figcaption>
+                    Ryhmän jäsenet Leevi Paattilammi ja Niklas Seppälä
+                </figcaption>
+            </figure>
+        </article>
+
+        <article>
+            <h2>Sovelluksen yleiskuvaus</h2>
+            <p>
+                Barspotting-sovelluksen käyttötarkoituksena on mahdollistaa 18-25v-nuoria löytämään julkisen liikenteen reitit haluamiinsa anniskeluravintoloihin Helsingin alueella.
+            </p>
+            <p>
+                Sovellus toimii avoimista rajapinnoista haetuilla baarien sekä joukkoliikenteen reittien tiedoilla, joista lisää alempana.
+            </p>
+        </article>
+
+        <article>
+            <h2>Mainosvideo</h2>
+            <p>Tuotimme sovelluksellemme mainosvideon, joka on upotteena alla.</p>
+            <figure>
+                <iframe class="video" src="https://www.youtube.com/embed/nwOzaHCW6kY" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <figcaption>
+                    Barspotting-mainosvideo youtubessa
+                </figcaption>
+            </figure>
+        </article>
+
+        <article>
+            <h2>Ominaisuudet sekä toiminnot</h2>
+            <ul>
+                <li>Helsingin baarien näyttäminen kartalla</li>
+                <li>Baarin tietojen näyttäminen</li>
+                <li>Julkisen liikenteen reittiohjeiden näyttäminen baariin</li>
+                <li>Baarien suodattaminen aihetunnisteiden mukaan</li>
+                <li>Baarien hakeminen nimen perusteella</li>
+            </ul>
+        </article>
+
+        <article id="apiarticle">
+            <h2>Käytetyt APIt</h2>
+            <section>
+                <h3>HSL Digitransit-rajapinta</h3>
+                <a target="_blank" href="https://digitransit.fi/en/developers/apis/1-routing-api/">
+                    Nettisivu
+                </a>
+                <h4>Esimerkki käytöstä sovelluksessa</h4>
+                <section class="codeBlock">
+                    const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';<br/>const DIGITRANSIT_URL = `https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql`;<br/><br/>const graphQl = {<br/>&nbsp;&nbsp;options: {<br/>&nbsp;&nbsp;&nbsp;&nbsp;method: 'POST',<br/>&nbsp;&nbsp;&nbsp;&nbsp;headers: {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Content-Type': 'application/graphql',<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Accept': 'application/json',<br/>&nbsp;&nbsp;&nbsp;},<br/>&nbsp;&nbsp;&nbsp;body: null<br/>&nbsp;&nbsp;},<br/>&nbsp;&nbsp;/**<br/>&nbsp;&nbsp; * Creates graphQL POST body for route query between<br/>&nbsp;&nbsp; * two positions. <br/>&nbsp;&nbsp; * <br/>&nbsp;&nbsp; * @param {object} fromPosition route start position.<br/>&nbsp;&nbsp; * @param {object} toPosition route target position.<br/>&nbsp;&nbsp; * @param {number} resultCount query result count.<br/>&nbsp;&nbsp; * <br/>&nbsp;&nbsp; * @returns {string} graphQL POST body as string.<br/>&nbsp;&nbsp; */<br/>&nbsp;&nbsp;getRouteToDest: (fromPosition, toPosition, resultCount) => `{<br/>&nbsp;&nbsp;&nbsp;plan(<br/>&nbsp;&nbsp;&nbsp;&nbsp;from: { lat:${fromPosition.lat}, lon: ${fromPosition.lon} }<br/>&nbsp;&nbsp;&nbsp;&nbsp;to: {lat:${toPosition.lat}, lon: ${toPosition.lon} }<br/>&nbsp;&nbsp;&nbsp;&nbsp;numItineraries: ${resultCount}<br/>&nbsp;&nbsp;&nbsp;) {<br/>&nbsp;&nbsp;&nbsp;&nbsp;itineraries {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legs {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;intermediateStops {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;route {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gtfsId,<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shortName<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;longName<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mode<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;startTime<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endTime<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;duration<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lat<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lon<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;distance<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lat<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lon<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legGeometry {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;points<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;}`<br/>}<br/>
+                    <br/>
+                    <br/>
+                    export const routesAPI = {<br/>&nbsp;&nbsp;getRoutesToBarAsync: async function (fromPosition, toPosition) {<br/>&nbsp;&nbsp;&nbsp;&nbsp;try {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;graphQl.options.body = graphQl.getRouteToDest(fromPosition, toPosition, 3);<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const response = await fetch(DIGITRANSIT_URL, graphQl.options);<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return (await response.json()).data.plan.itineraries;<br/>&nbsp;&nbsp;&nbsp;&nbsp;} catch (error) {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.error(error);<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;<br/>&nbsp;&nbsp;&nbsp;&nbsp;} finally {<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;graphQl.options.body = null;<br/>&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;},<br/>}<br/>
+                </section>
+            </section>
+            <section>
+                <h3>MyHelsinki Open API</h3>
+                <a target="_blank" href="http://open-api.myhelsinki.fi/">
+                    Nettisivu
+                </a>
+                <h4>Esimerkki käytöstä sovelluksessa</h4>
+                <section class="codeBlock">
+/**<br/>* Sends async API call to open-api.myhelsinki.fi for<br/>* all the bars and nightlife locations. Tags and meta<br/>* are excluded from response object.<br/>* <br/>* @returns {object[]} collection containing<br/>*&nbsp;&nbsp;&nbsp;bar and nightlife locations in Helsinki.<br/>*/<br/>getNightlifeAsync: async function () {<br/>&nbsp;&nbsp;const url = `${CORS_PROXY}http://open-api.myhelsinki.fi/v1/places/?tags_search=BARS%20%26%20NIGHTLIFE`;<br/>&nbsp;&nbsp;try {<br/>&nbsp;&nbsp;&nbsp;&nbsp;const response = await fetch(url);<br/>&nbsp;&nbsp;&nbsp;&nbsp;const data = await response.json();<br/>&nbsp;&nbsp;&nbsp;&nbsp;return data.data; // Extract only the important data<br/>&nbsp;&nbsp;} catch (error) {<br/>&nbsp;&nbsp;&nbsp;&nbsp;console.error(error.message);<br/>&nbsp;&nbsp;}<br/>}
+                </section>
+            </section>
+        </article>
+
+        <article>
+            <h2>Muut tekniikat</h2>
+
+            <h3>CSS-animaatiot</h3>
+            <section>
+                <section>
+                    <span id="spinner">
+                        BARSPOTTING
+                    </span>
+                </section>
+
+                <h4>CSS-esimerkki</h4>
+                <section class="codeBlock">
+                    @keyframes spin {<br/>&nbsp;&nbsp;0% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform:rotate(0deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;16.6% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform:rotate(30deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;33.3% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(0deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;50% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(-30deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;66.6% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(0deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;83.3% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(30deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;100% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(0deg);<br/>&nbsp;&nbsp;}<br/>}<br/>
+                    <br/>
+                    <br/>
+                    #spinner {<br/>&nbsp;&nbsp;font-size: 25px;<br/>&nbsp;&nbsp;font-family: 'Righteous', cursive;<br/>&nbsp;&nbsp;width: 200px;<br/>&nbsp;&nbsp;height: 200px;<br/>&nbsp;&nbsp;position: fixed;<br/>&nbsp;&nbsp;top: 50%;<br/>&nbsp;&nbsp;left: 50%;<br/>&nbsp;&nbsp;margin-left: -100px;<br/>&nbsp;&nbsp;margin-top: -100px;<br/><br/>&nbsp;&nbsp;animation-name: spin;<br/>&nbsp;&nbsp;animation-duration: 2000ms;<br/>&nbsp;&nbsp;animation-iteration-count: infinite;<br/>&nbsp;&nbsp;animation-timing-function: linear;<br/>&nbsp;&nbsp;animation-direction: alternate;<br/>&nbsp;&nbsp;background-color: #1f425f;<br/>&nbsp;&nbsp;border-radius: 100px;<br/>&nbsp;&nbsp;text-align: center;<br/>&nbsp;&nbsp;line-height: 200px;<br/>}
+                 </section>
+            </section>
+         </article> 
+
+    </main>
+    
+
+</body>
+</html>
