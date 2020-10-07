@@ -61,22 +61,16 @@ export const ui = {
 
         const routePanelBtn = document.querySelector('#route-panel-btn');
         const routePanel = document.querySelector('#route-panel');
-        const closeRouteBtn = document.querySelector('#close-route-btn');
+        const backToLocationBtn = document.querySelector('#close-route-btn');
 
-        closeRouteBtn.addEventListener('click', _ => {
-            if (map.locations.anyHidden()) {
-                map.locations.popCacheToMap();
-            }
-
-            this.setElemVisibility("#"+_.target.id, false);
-
+        backToLocationBtn.addEventListener('click', _ => {
+            this.setElemVisibility('#close-route-btn', false);
             this.setElemVisibility('#route-instructions', false);
             this.setElemVisibility('#bar-info', true);
 
             document.querySelectorAll('.active-route').forEach(x => {
                 x.classList.remove('active-route');
             });
-            map.routes.clear();
         });
 
         routePanelBtn.addEventListener('click', _ => {
@@ -122,7 +116,6 @@ export const ui = {
         clearSearchBtn.addEventListener('click', e => {
             this.clearSearchBar();
             if (map.locations.anyHidden()) {
-                console.log(map.locations._cache)
                 map.locations.popCacheToMap();
             }
         });
@@ -136,7 +129,7 @@ export const ui = {
         });
     },
     setElemVisibility: function(selector, visible) {
-        if (visible == true) {
+        if (visible) {
             document.querySelector(selector).classList.remove('hidden');
         } else {
             document.querySelector(selector).classList.add('hidden');
@@ -147,7 +140,6 @@ export const ui = {
         this.toggleLocationPanel('up');
 
         this.setElemVisibility('#close-route-btn', false);
-
         this.setElemVisibility('#route-instructions', false);
 
         const routePanel = document.querySelector('#route-panel');
@@ -166,10 +158,11 @@ export const ui = {
     renderRouteList: function(routes, destination, exclude=null) {
         const routeList = document.querySelector('#route-list');
 
-        document.querySelectorAll(".route").forEach(x => {
+        document.querySelectorAll(".route-btn").forEach(x => {
             x.remove();
         });
         routes.forEach((route) => {
+            console.log(route)
 
             const firstLeg = route.legs[0];
             const lastLeg = route.legs[route.legs.length-1];
@@ -197,40 +190,55 @@ export const ui = {
                     <span>${travelModes}</span>
                 </span>
             `;
-            routeList.appendChild(routeItem);
 
-            routeItem.addEventListener('click', (evt) => {
+            // routeItem.addEventListener('click', (evt) => {
+            //     this.renderRoute(route, destination, evt);
+            // });
+
+            const routeContainer = document.createElement('div');
+            routeContainer.classList.add('btn');
+            routeContainer.classList.add('route-btn');
+            routeContainer.addEventListener('click', evt => {
                 this.renderRoute(route, destination, evt);
-            });
+            })
+
+            routeContainer.appendChild(routeItem);
+            routeList.appendChild(routeContainer);
 
         });
     },
-    renderRoute: function(route, destination, evt=null) {
+    renderRoute: function(route, destination, event=null) {
 
+        // Clear the map from other destination markers
         map.locations.onlyDisplayFocused(destination.id);
 
+        // Display back button
         this.setElemVisibility('#close-route-btn', true);
-        if (evt != null) {
-            const routeItem = evt.target.closest("li");
 
-            document.querySelectorAll('.active-route').forEach(x => {
-                x.classList.remove('active-route');
-            });
+        if (event != null) {
+            // Remove old active css classes
+            event.target.closest("ul").querySelectorAll('.active-route')
+                .forEach(elem => elem.classList.remove('active-route'));
 
-            if(!routeItem.classList.contains('active-route')) {
-                routeItem.classList.add('active-route');
-            }
+            // get pressed button;
+            const routeBtn = event.target.classList.contains('btn') 
+                ? event.target
+                : event.target.closest('.btn');
+
+            // set it active
+            routeBtn.classList.add('active-route');
         }
 
+        // from map
         map.routes.clear();
-        document.querySelectorAll(".route-leg").forEach(x => {
-            x.remove();
+        // from panel
+        document.querySelectorAll(".route-leg").forEach(leg => {
+            leg.remove();
         });
 
         const barInfoPanel = document.querySelector('#bar-info');
         barInfoPanel.classList.add('hidden');
         const routeInstructionsList = document.querySelector('#route-instructions');
-
 
         routeInstructionsList.classList.remove('hidden');
         route.legs.forEach(leg => {
@@ -278,7 +286,6 @@ export const ui = {
 
             legItem.innerHTML = `
             <span>
-                <time>${startTimeString}</time>
                 ${routeStringParts.join(" - ")}
             </span>`;
             routeInstructionsList.appendChild(legItem);
@@ -289,10 +296,12 @@ export const ui = {
                 map.view.zoomTo([leg.from.lat, leg.from.lon], 16, 17);
             });
         });
+
+        // Focus map to view the whole route
         map.view.fitBounds(
             map._layers.routes.getBounds(),
             {
-                padding: [150,150],
+                padding: [50,50],
                 maxZoom: 16
             }
         );

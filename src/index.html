@@ -64,16 +64,18 @@
             <span id="spinner" class="hidden">BARSPOTTING</span>
         </div>
         <section id="route-panel">
-            <article id="bar-info">
-                <div id="bar-info-header">
-                    <a id="bar-link" target="_blank" href="#"><h3 id="bar-name"></h3><img src="./icons/link-light-icon.png" alt=""></a>
-                    <div class="btn" id="route-panel-btn">
-                        <img src="./icons/close-light-icon.png" alt="routes">
-                    </div>
+            <div id="bar-info-header">
+                <a id="bar-link" target="_blank" href="#"><h3 id="bar-name"></h3><img src="./icons/link-light-icon.png" alt=""></a>
+                <div class="btn" id="route-panel-btn">
+                    <img class="small-icon" src="./icons/close-light-icon.png" alt="routes">
                 </div>
+                <div class="btn" id="close-route-btn">
+                    <img id="back-btn" class="small-icon" src="./icons/expand-icon.png" alt="back">
+                </div>
+            </div>
+            <article id="bar-info">
                 <p id="bar-description"></p>
             </article>
-            <div class="btn" id="close-route-btn">Go back</div>
             <ul id="route-list">
             </ul>
             <ul class="hidden" id="route-instructions">
