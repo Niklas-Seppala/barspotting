@@ -6,8 +6,11 @@ const CHAR_OFFSET = 0x3f;
 
 export const polyline = {
     /**
+     * Encodes coordinate array using Google-polyline
+     * algorithm
+     * @param {Array} coords Coordinate array
      * 
-     * @param {Array} coords 
+     * @returns {string} encoded string
      */
     encode: function(coords) {
         let charArr = [];
@@ -26,32 +29,38 @@ export const polyline = {
     },
 
     /**
-     * 
-     * @param {string} encodedStr 
+     * Decodes google-polyline encoded string
+     * to coordinate array.
+     * @param {string} encodedStr encoded coordinates
+     * @returns {Array} coordinate array
      */
     decode: function(encodedStr) {
          const coords = [];
 
-        let chunk, sum, leftShift, i, lat, lon;
+        let char, sum, leftShift, i, lat, lon;
         i = lat = lon = 0;
         const charCount = encodedStr.length;
         while (i < charCount) {
+
+            // decode latitude
             sum = leftShift = 0;
             do {
-                chunk = encodedStr.charCodeAt(i++) - CHAR_OFFSET;
-                sum |= (chunk & FIVE_BIT_MASK) << leftShift;
+                char = encodedStr.charCodeAt(i++) - CHAR_OFFSET;
+                sum |= (char & FIVE_BIT_MASK) << leftShift;
                 leftShift += 5;
-            } while (chunk >= SIX_BITS);
+            } while (char >= SIX_BITS);
             lat += (sum & 1) == 1 ? ~(sum >> 1) : (sum >> 1);
 
+            // decode longitude
             sum = leftShift = 0;
             do {
-                chunk = encodedStr.charCodeAt(i++) - CHAR_OFFSET;
-                sum |= (chunk & FIVE_BIT_MASK) << leftShift;
+                char = encodedStr.charCodeAt(i++) - CHAR_OFFSET;
+                sum |= (char & FIVE_BIT_MASK) << leftShift;
                 leftShift += 5;
-            } while (chunk >= SIX_BITS);
+            } while (char >= SIX_BITS);
             lon += (sum & 1) == 1 ? ~(sum >> 1) : (sum >> 1);
 
+            // add lon/lat object to result array
             coords.push({ lat: (lat * 1e-5), lon: (lon * 1e-5) });
         }
         return coords;
@@ -64,7 +73,8 @@ export const polyline = {
  * @param {number} coord 
  */
 function encodeCoord(charArr, coord) {
-    let remaining = (coord & 1) == 1 ? ~(coord) << 1 : coord << 1;
+    // flip alla bits if coord value is negative
+    let remaining = coord < 0 ? (~coord) << 1 : coord << 1;
     while (remaining >= SIX_BITS) {
         charArr.push((0x20 | (remaining & FIVE_BIT_MASK)) + CHAR_OFFSET);
         remaining >>= 5;

@@ -187,7 +187,6 @@ export const ui = {
             temp = temp.length === 0 ? ['WALK'] : temp;
             const travelModes = temp.map(m => this.modes[m].mode).join(', ')
 
-
             const firstLeg = route.legs[0];
             const lastLeg = route.legs[route.legs.length-1];
 
@@ -201,23 +200,17 @@ export const ui = {
             }
 
             const routeItem = document.createElement('li');
+            routeItem.classList.add('btn');
+            routeItem.classList.add('route-btn');
             routeItem.classList.add('route');
             routeItem.innerHTML = `
-                <span>
-                    <time>${startTimeString}-${endTimeString} (${durationString})</time>
-                    <span>${travelModes}</span>
-                </span>
+                <time>${startTimeString}</time><span>&nbsp;-&nbsp;</span><time>${endTimeString}</time>
+                <span>&nbsp;${travelModes} (${durationString})</span>
             `;
-
-            const routeContainer = document.createElement('div');
-            routeContainer.classList.add('btn');
-            routeContainer.classList.add('route-btn');
-            routeContainer.addEventListener('click', evt => {
+            routeItem.addEventListener('click', evt => {
                 this.renderRoute(route, destination, evt);
             })
-
-            routeContainer.appendChild(routeItem);
-            routeList.appendChild(routeContainer);
+            routeList.appendChild(routeItem);
         });
     },
 
@@ -235,7 +228,7 @@ export const ui = {
                 .forEach(elem => elem.classList.remove('active-route'));
 
             // get pressed button;
-            const routeBtn = event.target.classList.contains('btn') 
+            const routeBtn = event.target.classList.contains('btn')
                 ? event.target
                 : event.target.closest('.btn');
 
@@ -246,9 +239,7 @@ export const ui = {
         // from map
         map.routes.clear();
         // from panel
-        document.querySelectorAll(".route-leg-container").forEach(leg => {
-            leg.remove();
-        });
+        document.querySelectorAll(".route-leg").forEach(leg => leg.remove());
 
         this.setElemVisibility('#bar-info', false);
         const routeInstructionsList = document.querySelector('#route-instructions');
@@ -256,64 +247,48 @@ export const ui = {
 
         route.legs.forEach((leg, i) => {
             
-            const container = document.createElement('div');
-            container.classList.add('btn');
-            container.classList.add('route-leg-container');
+            const legItem = document.createElement('li');
+            legItem.classList.add('btn');
+            legItem.classList.add('route-leg');
 
-            let routeStringParts = [];
+            legItem.addEventListener('click', _ => {
+                map.view.zoomTo([leg.from.lat, leg.from.lon], 16, 17);
+            });
 
-            const timeElem = document.createElement('time');
-            timeElem.classList.add('leg-time');
-            timeElem.textContent = `${formatTime(leg.startTime)} - ${formatTime(leg.endTime)}`
+            const legTime = document.createElement('div');
+            legTime.innerHTML = 
+                `<time>${formatTime(leg.startTime)}</time><span>&nbsp;-&nbsp;</span><time>${formatTime(leg.endTime)}</time>`
+            legItem.appendChild(legTime);
 
-            container.appendChild(timeElem);
+            const destString = i != route.legs.length-1 ? leg.to.name : destination.name.fi;
 
-            const destString = i != route.legs.length-1
-                ? leg.to.name
-                : destination.name.fi;
+            // Create directions to route leg element
+            const directions = document.createElement('span');
+            directions.textContent = `${this.modes[leg.mode].instruction} kohteeseen ${destString}`;
+            legItem.appendChild(directions)
 
-            routeStringParts.push(`${this.modes[leg.mode].instruction} kohteeseen ${destString}`);
-
+            // Create detail info about the route leg
             let detailStr = '';
-            
             if (leg.mode == "WALK") {
                 const distance = calculateDistance(leg.from.lat, leg.from.lon, leg.to.lat, leg.from.lon);
                 detailStr = `${(distance/1000).toFixed(2)}km`;
-    
                 if (distance < 1000) {
                     detailStr = `${(distance).toFixed(0)}m`;
                 }
             }
-
-            const legItem = document.createElement('li');
-
-            legItem.classList.add('route-leg');
-
             if (leg.intermediateStops.length > 0) {
                 detailStr = `${leg.intermediateStops.length} stops`;
             }
             else if (leg.intermediateStops.length == 1) {
                 detailStr = `1 stop`;
             }
-
-            legItem.innerHTML = `
-            <span>
-                ${routeStringParts.join(" - ")}
-            </span>`;
-            container.appendChild(legItem);
-
             const detailElem = document.createElement('span');
             detailElem.textContent = detailStr;
-            container.appendChild(detailElem);
+            legItem.appendChild(detailElem);
 
-
-            routeInstructionsList.appendChild(container);
+            routeInstructionsList.appendChild(legItem);
 
             map.routes.draw(leg, map.options.routes[leg.mode], true);
-
-            container.addEventListener('click', _ => {
-                map.view.zoomTo([leg.from.lat, leg.from.lon], 16, 17);
-            });
         });
 
         // Focus map to view the whole route

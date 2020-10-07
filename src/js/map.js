@@ -464,7 +464,7 @@ export const map = {
 *
 * @param {Number} lat1 latitude coordinate of the first point
 * @param {Number} long1 longitude coordinate of the first point
-* @param {Number} lat2 latitude coordinate of the second point 
+* @param {Number} lat2 latitude coordinate of the second point
 * @param {Number} long2 longitude coordinate of the second point
 *
 * @returns {Number} the distance between the two points in meters
@@ -476,7 +476,7 @@ export function calculateDistance(lat1, long1, lat2, long2) {
     let longRad2 = long2 / (180/Math.PI);
 
     let distance = 3963.0 * Math.acos(
-        (Math.sin(latRad1) * Math.sin(latRad2)) + Math.cos(latRad1) * Math.cos(latRad2) * Math.cos(longRad2 - longRad2)
+        (Math.sin(latRad1) * Math.sin(latRad2)) + Math.cos(latRad1) * Math.cos(latRad2) * Math.cos(longRad2 - longRad1)
     ) * 1.609344 * 1000;
 
     return distance;

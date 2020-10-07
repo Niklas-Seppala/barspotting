@@ -1,3 +1,8 @@
+html, body, main, #map {
+    height: 100%;
+    width: 100vw;
+}
+
 body {
     padding: 0;
     margin: 0;
@@ -11,10 +16,7 @@ a {
     color: inherit;
     text-decoration: inherit;
 }
-html, body, main, #map {
-    height: 100%;
-    width: 100vw;
-}
+
 textarea:focus, input:focus{ outline: none; }
 
 header {
@@ -23,9 +25,17 @@ header {
     width: 100%;
 }
 
+#banner {
+    width: 100%;
+}
+#banner > img {
+    width: 100%;
+}
+
 ul {
     list-style: none;
     padding-inline-start: 0;
+    margin: 0;
 }
 
 h1 {
@@ -188,19 +198,13 @@ h1 {
     background: linear-gradient(0deg, rgba(44,89,126,1) 0%, rgb(49, 97, 136) 100%);
 }
 
-.route-leg { cursor: pointer; }
-
 #map { position: relative; }
 
 #bar-description {
-    padding-left: 15px;
+    /* padding-left: 15px; */
     margin-top: 5px;
     margin-bottom: 5px;
 }
-
-/* #route-instructions, #route-list section {
-    max-height: 100px;
-} */
 
 #route-list section { margin-left: 5px; }
 
@@ -217,8 +221,6 @@ h1 {
 #close-route-btn {
     position: absolute;
     right: 32px;
-    padding: 4px;
-    border-radius: 4px;
 }
 
 #spinner {
@@ -362,11 +364,11 @@ h1 {
 .route-panel-btn {
     margin-top: 4px;
     margin-bottom: 4px;
+    padding: 4px;
+    border-radius: 4px;
 }
 
 #route-panel-close-btn {
-    padding: 4px;
-    border-radius: 4px;
     position: absolute;
     right: 4px;
 }
@@ -381,9 +383,7 @@ h1 {
     border-radius: 2px;
 }
 
-/* #route-list { overflow-y: auto; } */
-
-.route-leg-container {
+.route-leg {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -395,4 +395,32 @@ h1 {
     margin-top: 4px;
     margin-right: 4px;
     margin-bottom: 4px;
+}
+
+@media screen and (min-width: 500px) {
+    #bar-name { font-size: 26px; }
+    #bar-info-header { height: 15%; }
+    #bar-link > img { height: 24px; }
+    .route-panel-btn > img { height: 22px !important; }
+    #close-route-btn { right: 39px; }
+    #bar-description { 
+        font-size: 16px;
+        margin: 15px;
+    }
+    #route-list { display: flex; }
+    #route-list li { margin-right: 15px; }
+    #bar-panel { display: flex; }
+    #bar-info { width: 70%; }
+    #routes-section { width: 30%; }
+    .route-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media screen and (min-width: 500px) {
+        #bar-info { width: 50%; }
+        #routes-section { width: 50%; }
+    }
 }
