@@ -38,6 +38,11 @@ article, section {
 	width: 90%;
 }
 
+#portraitSection img {
+	width: 600px;
+	max-width: 80%;
+}
+
 .btn > a > img {
     height: 28px;
 }
@@ -47,6 +52,10 @@ article, section {
 	width: 640px;
 	height: 480px;
 	max-width: 80%;
+}
+
+#portraitSection {
+	display: flex;
 }
 
 #menu-panel {
