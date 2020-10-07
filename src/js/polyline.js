@@ -51,7 +51,7 @@ export const polyline = {
                 leftShift += 5;
             } while (chunk >= SIX_BITS);
             lon += (sum & 1) == 1 ? ~(sum >> 1) : (sum >> 1);
-    
+
             coords.push({ lat: (lat * 1e-5), lon: (lon * 1e-5) });
         }
         return coords;

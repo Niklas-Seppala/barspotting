@@ -10,12 +10,30 @@ export const ui = {
         includePizzas: false
     },
     modes : {
-        'WALK': 'Walk',
-        'BUS': 'Bus',
-        'SUBWAY': 'Metro',
-        'TRAM': 'Tram',
-        'RAIL': 'Train',
-        'FERRY': 'Ferry'
+        'WALK': {
+            instruction: 'Kävele',
+            mode: 'Kävellen'
+        },
+        'BUS': {
+            instruction: 'Bussi',
+            mode: 'Bussi'
+        },
+        'SUBWAY': {
+            instruction: 'Metro',
+            mode: 'Metro'
+        },
+        'TRAM': {
+            instruction: 'Ratikka',
+            mode: 'Ratikka'
+        },
+        'RAIL': {
+            instruction: 'Juna',
+            mode: 'Juna'
+        },
+        'FERRY': {
+            instruction: 'Lautta',
+            mode: 'Lautta'
+        }
     },
     locationTags: {
         types : [
@@ -89,7 +107,6 @@ export const ui = {
         const tagTypes = tags.querySelector('#tag-types').children;
         const tagStyles = tags.querySelector('#tag-styles').children;
 
-
         for (let i = 0; i < tagTypes.length; i++) {
             const elem = tagTypes[i];
             const checkbox = elem.querySelector('input');
@@ -162,17 +179,20 @@ export const ui = {
             x.remove();
         });
         routes.forEach((route) => {
-            console.log(route)
+
+            // Filter walk leg modes.
+            const m = [];
+            route.legs.forEach(leg => m.push(leg.mode));
+            let temp = [...new Set(m.filter(mode => mode !== 'WALK'))];
+            temp = temp.length === 0 ? ['WALK'] : temp;
+            const travelModes = temp.map(m => this.modes[m].mode).join(', ')
+
 
             const firstLeg = route.legs[0];
             const lastLeg = route.legs[route.legs.length-1];
 
-            // evil oneliner to pad with zeroes
-            const d = (x) => x<10 ? "0"+x : x;
-
             const startTimeString = formatTime(firstLeg.startTime);
             const endTimeString = formatTime(lastLeg.endTime);
-
 
             const duration = timeDiff(firstLeg.startTime, lastLeg.endTime);
             let durationString = `${duration[1]}min`;
@@ -180,20 +200,14 @@ export const ui = {
                 durationString = `${duration[0]}h ` + durationString;
             }
 
-            const travelModes = route.legs.map(leg => this.modes[leg.mode]).join(", ");
-
             const routeItem = document.createElement('li');
             routeItem.classList.add('route');
             routeItem.innerHTML = `
                 <span>
-                    <time>${startTimeString} - ${endTimeString} (${durationString})</time>
+                    <time>${startTimeString}-${endTimeString} (${durationString})</time>
                     <span>${travelModes}</span>
                 </span>
             `;
-
-            // routeItem.addEventListener('click', (evt) => {
-            //     this.renderRoute(route, destination, evt);
-            // });
 
             const routeContainer = document.createElement('div');
             routeContainer.classList.add('btn');
@@ -204,9 +218,9 @@ export const ui = {
 
             routeContainer.appendChild(routeItem);
             routeList.appendChild(routeContainer);
-
         });
     },
+
     renderRoute: function(route, destination, event=null) {
 
         // Clear the map from other destination markers
@@ -232,67 +246,72 @@ export const ui = {
         // from map
         map.routes.clear();
         // from panel
-        document.querySelectorAll(".route-leg").forEach(leg => {
+        document.querySelectorAll(".route-leg-container").forEach(leg => {
             leg.remove();
         });
 
-        const barInfoPanel = document.querySelector('#bar-info');
-        barInfoPanel.classList.add('hidden');
+        this.setElemVisibility('#bar-info', false);
         const routeInstructionsList = document.querySelector('#route-instructions');
-
         routeInstructionsList.classList.remove('hidden');
-        route.legs.forEach(leg => {
+
+        route.legs.forEach((leg, i) => {
+            
+            const container = document.createElement('div');
+            container.classList.add('btn');
+            container.classList.add('route-leg-container');
+
             let routeStringParts = [];
 
-            const startTimeString = formatTime(leg.startTime);
-            const endTimeString = formatTime(leg.endTime);
+            const timeElem = document.createElement('time');
+            timeElem.classList.add('leg-time');
+            timeElem.textContent = `${formatTime(leg.startTime)} - ${formatTime(leg.endTime)}`
 
-            routeStringParts.push(startTimeString);
-            routeStringParts.push(endTimeString);
+            container.appendChild(timeElem);
 
-            routeStringParts.push(`${this.modes[leg.mode]} to ${leg.to.name}`);
+            const destString = i != route.legs.length-1
+                ? leg.to.name
+                : destination.name.fi;
 
+            routeStringParts.push(`${this.modes[leg.mode].instruction} kohteeseen ${destString}`);
+
+            let detailStr = '';
+            
             if (leg.mode == "WALK") {
                 const distance = calculateDistance(leg.from.lat, leg.from.lon, leg.to.lat, leg.from.lon);
-                let distanceString = `${(distance/1000).toFixed(2)}km`;
+                detailStr = `${(distance/1000).toFixed(2)}km`;
     
                 if (distance < 1000) {
-                    distanceString = `${(distance).toFixed(0)}m`;
+                    detailStr = `${(distance).toFixed(0)}m`;
                 }
-
-                routeStringParts.push(distanceString)
             }
 
             const legItem = document.createElement('li');
+
             legItem.classList.add('route-leg');
 
-            const duration = timeDiff(leg.startTime, leg.endTime);
-
-            let durationString = `${duration[1]}min`;
-            if (duration[0] > 0) {
-                durationString = `${duration[0]}h ` + durationString;
-            }
-            routeStringParts.push(durationString);
-
-            let stopAmountString = ``;
             if (leg.intermediateStops.length > 0) {
-                stopAmountString = `${leg.intermediateStops.length} stops`;
-                routeStringParts.push(stopAmountString);
+                detailStr = `${leg.intermediateStops.length} stops`;
             }
             else if (leg.intermediateStops.length == 1) {
-                stopAmountString = `1 stop`;
-                routeStringParts.push(stopAmountString); 
+                detailStr = `1 stop`;
             }
 
             legItem.innerHTML = `
             <span>
                 ${routeStringParts.join(" - ")}
             </span>`;
-            routeInstructionsList.appendChild(legItem);
-            
+            container.appendChild(legItem);
+
+            const detailElem = document.createElement('span');
+            detailElem.textContent = detailStr;
+            container.appendChild(detailElem);
+
+
+            routeInstructionsList.appendChild(container);
+
             map.routes.draw(leg, map.options.routes[leg.mode], true);
 
-            legItem.addEventListener('click', _ => {
+            container.addEventListener('click', _ => {
                 map.view.zoomTo([leg.from.lat, leg.from.lon], 16, 17);
             });
         });
@@ -329,9 +348,9 @@ export const ui = {
         }
     },
     showLoadingSpinner: function() {
-     this.setElemVisibility('#spinner', true);
+        this.setElemVisibility('#spinner', true);
     },
     hideLoadingSpinner: function() {
-     this.setElemVisibility('#spinner', false);
+        this.setElemVisibility('#spinner', false);
     }
 }

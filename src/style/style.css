@@ -90,7 +90,7 @@ h1 {
 }
 
 .btn:hover {
-    background: linear-gradient(0deg, rgba(44,89,126,1) 0%, rgb(79, 130, 172) 100%);
+    background: linear-gradient(0deg, rgba(44,89,126,1) 0%, rgb(57, 106, 146) 100%);
 }
 
 .btn > img { height: 24px; }
@@ -186,7 +186,7 @@ h1 {
 }
 
 .active-route {
-    background: linear-gradient(0deg, rgba(44,89,126,1) 0%, rgb(79, 130, 172) 100%);
+    background: linear-gradient(0deg, rgba(44,89,126,1) 0%, rgb(49, 97, 136) 100%);
 }
 
 .route-leg { cursor: pointer; }
@@ -202,10 +202,11 @@ h1 {
     margin-bottom: 5px;
 }
 
-#route-instructions, #route-list section {
+#route-instructions, #route-list section { 
     overflow-y: auto;
-    height: 75px;
+    max-height: 100px;
 }
+
 
 #route-list section { margin-left: 5px; }
 
@@ -222,7 +223,7 @@ h1 {
 #close-route-btn {
     position: absolute;
     right: 22px;
-    padding: 2px;
+    padding: 4px;
     border-radius: 4px;
 }
 
@@ -353,13 +354,13 @@ h1 {
 }
 
 #route-panel-btn {
-    padding: 2px;
+    padding: 4px;
     border-radius: 4px;
     position: absolute;
     right: -3px;
 }
 
-.small-icon { height: 18px !important; }
+.small-icon { height: 16px !important; }
 
 #back-btn { transform: rotate(90deg); }
 
@@ -370,3 +371,11 @@ h1 {
 }
 
 #route-list { overflow-y: auto; }
+
+.route-leg-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+}
