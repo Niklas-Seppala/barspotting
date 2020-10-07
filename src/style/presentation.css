@@ -1,0 +1,94 @@
+body {
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+}
+
+h1, h2, h3, h4, h5 {
+	font-family: 'Righteous', cursive;
+}
+
+html, body, main {
+	width: initial;
+	height: initial;
+}
+
+
+a {text-decoration: underline; color: initial; }
+a:visited {text-decoration: underline; color: initial; }
+a:hover {text-decoration: underline; color: initial; }
+a:active {text-decoration: underline; color: initial; }
+
+
+ul {
+	list-style: initial;
+	padding-left: 1em;
+}
+
+header {
+	position: initial;
+}
+
+article {
+	margin-left: 1em;
+	color: #1f425f;
+}
+
+article, section {
+	width: 90%;
+}
+
+#portraitSection img {
+	width: 600px;
+	max-width: 80%;
+}
+
+.btn > a > img {
+    height: 28px;
+}
+
+
+.video {
+	width: 640px;
+	height: 480px;
+	max-width: 80%;
+}
+
+#portraitSection {
+	display: flex;
+}
+
+#menu-panel {
+	position: initial;
+}
+
+#menu-panel h2 {
+	margin-left: initial;
+	font-size: 30px;
+}
+
+#spinner {
+	font-size: 25px;
+	font-family: 'Righteous', cursive;
+	width: 200px;
+	height: 200px;
+	color: #EDFCFA;
+	position: relative;
+
+	top:initial;
+	left:initial;
+	margin-left: initial;
+	margin-top: initial;
+	z-index:initial;
+
+	display: inline-block;
+	animation-name: spin;
+	animation-duration: 2000ms;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+	animation-direction: alternate;
+	background-color: #1f425f;
+	border-radius: 100px;
+	text-align: center;
+	line-height: 200px;
+}
