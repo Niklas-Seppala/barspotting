@@ -38,11 +38,10 @@ article, section {
 	width: 90%;
 }
 
-.codeBlock {
-	background-color: #1f425f;
-	color: #EDFCFA;
-	display: block;
+.btn > a > img {
+    height: 28px;
 }
+
 
 .video {
 	width: 640px;
