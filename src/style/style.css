@@ -6,6 +6,7 @@ body {
     font-family: monospace;
     overflow: hidden;
 }
+
 a {
     color: inherit;
     text-decoration: inherit;
@@ -78,14 +79,12 @@ h1 {
 
 /************BUTTONS************/
 .btn {
-    border-radius: 7px;
+    border-radius: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 4px;
     background-color: #2c597e;
-    margin-left: 5px;
-    margin-right: 5px;
     cursor: pointer;
 }
 
@@ -191,22 +190,17 @@ h1 {
 
 .route-leg { cursor: pointer; }
 
-
 #map { position: relative; }
 
 #bar-description {
-    max-height: 120px;
-    overflow-y: auto;
     padding-left: 15px;
     margin-top: 5px;
     margin-bottom: 5px;
 }
 
-#route-instructions, #route-list section { 
-    overflow-y: auto;
+/* #route-instructions, #route-list section {
     max-height: 100px;
-}
-
+} */
 
 #route-list section { margin-left: 5px; }
 
@@ -222,7 +216,7 @@ h1 {
 
 #close-route-btn {
     position: absolute;
-    right: 22px;
+    right: 32px;
     padding: 4px;
     border-radius: 4px;
 }
@@ -346,18 +340,35 @@ h1 {
     margin-left: 2px;
 }
 
+#bar-panel {
+    height: 90%;
+    overflow-y: auto;
+}
+
+#bar-panel::-webkit-scrollbar { width: 5px; }
+#bar-panel::-webkit-scrollbar-track { background: #00000000; }
+#bar-panel::-webkit-scrollbar-thumb { background-color: #122330;}
+
 #bar-info-header {
+    height: 10%;
+    padding-top: 4px;
+    padding-bottom: 4px;
     display: flex;
     align-items: center;
     background-color: #1f425f;
     justify-content: center;
 }
 
-#route-panel-btn {
+.route-panel-btn {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+#route-panel-close-btn {
     padding: 4px;
     border-radius: 4px;
     position: absolute;
-    right: -3px;
+    right: 4px;
 }
 
 .small-icon { height: 16px !important; }
@@ -370,7 +381,7 @@ h1 {
     border-radius: 2px;
 }
 
-#route-list { overflow-y: auto; }
+/* #route-list { overflow-y: auto; } */
 
 .route-leg-container {
     display: flex;
@@ -378,4 +389,10 @@ h1 {
     justify-content: center;
     align-items: center;
     margin-bottom: 5px;
+}
+
+.header-btn {
+    margin-top: 4px;
+    margin-right: 4px;
+    margin-bottom: 4px;
 }

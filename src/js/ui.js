@@ -77,7 +77,7 @@ export const ui = {
             }
         });
 
-        const routePanelBtn = document.querySelector('#route-panel-btn');
+        const routePanelBtn = document.querySelector('#route-panel-close-btn');
         const routePanel = document.querySelector('#route-panel');
         const backToLocationBtn = document.querySelector('#close-route-btn');
 
