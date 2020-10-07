@@ -142,7 +142,7 @@ export const map = {
     locations: {
 
         /**
-         * 
+         * Group of locations of interest
          */
         focusGroup : new L.FeatureGroup(),
 
@@ -297,14 +297,15 @@ export const map = {
     view: {
 
         /**
-         * 
+         * Predefined view related leaflet options
          */
         options: {
+
             /**
-             * 
+             * Options for setBounds function
              */
             bounds: {
-                padding: [2,2],
+                padding: [50,50],
                 maxZoom: 16
             },
 
@@ -364,11 +365,11 @@ export const map = {
         },
 
         /**
-         * 
-         * @param {*} bounds 
-         * @param {*} boundOptions 
+         * Fit the map view to specified bounds.
+         * @param {*} bounds bounds to fit view to
+         * @param {*} boundOptions extra options
          */
-        fitBounds: function(bounds, boundOptions) {
+        fitBounds: function(bounds, boundOptions=null) {
             const options = boundOptions ? boundOptions : this.options.bounds;
             map._instance.fitBounds(bounds, options)
         }
@@ -482,6 +483,11 @@ export function calculateDistance(lat1, long1, lat2, long2) {
     return distance;
 };
 
+/**
+ * Set zoom to map marker if user
+ * hasn't zoom beyond the threshold.
+ * @param {*} marker 
+ */
 function setMarkerZoom(marker) {
     if (map._instance.getZoom() >= 13) {
         map._instance.panTo(marker.getLatLng(), map._instance.moveViewOptions); // No zoom

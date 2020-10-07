@@ -18,11 +18,14 @@ export const polyline = {
         let lastLon = 0;
         
         for (let i = 0; i < len; i++) {
+            // convert lat and lon to integers
             const lat = Math.round(coords[i].lat * 1e5);
             const lon = Math.round(coords[i].lon * 1e5);
-            encodeCoord(charArr, lat - lastLat)
+
+            encodeCoord(charArr, lat - lastLat) // calculate offset
             encodeCoord(charArr, lon - lastLon)
-            lastLat = lat;
+            
+            lastLat = lat; // update latest processed coordinate
             lastLon = lon;
         }
         return String.fromCharCode(...charArr);
@@ -68,16 +71,21 @@ export const polyline = {
 }
 
 /**
- * 
+ * Encodes single coordinate to char and pushes
+ * it to char array.
  * @param {number[]} charArr 
  * @param {number} coord 
  */
 function encodeCoord(charArr, coord) {
-    // flip alla bits if coord value is negative
+    // flip alla bits if coord value is negative, then left shift by 1
     let remaining = coord < 0 ? (~coord) << 1 : coord << 1;
+
+    // consume binary value 5 bits at the time and convert it to
+    // char by adding 63 to 5-bit chunk.
     while (remaining >= SIX_BITS) {
         charArr.push((0x20 | (remaining & FIVE_BIT_MASK)) + CHAR_OFFSET);
         remaining >>= 5;
     }
+    // trailing chunk doesn't require OR'ing
     charArr.push(remaining + CHAR_OFFSET);
 }

@@ -5,10 +5,9 @@ import { map, calculateDistance } from "./map.js";
 
 export const ui = {
 
-    userOptions: {
-        rangeInKm: 20,
-        includePizzas: false
-    },
+    /**
+     * Travel modes
+     */
     modes : {
         'WALK': {
             instruction: 'Kävele',
@@ -54,6 +53,10 @@ export const ui = {
         ]
     },
 
+    /**
+     * Initialize the ui. Adds interactive eventhandlers
+     * to ui elements.
+     */
     init: function() {
         // set menu slider click events
         const menuBtn = document.querySelector('#settings-panel-button');
@@ -103,9 +106,9 @@ export const ui = {
         const locateBtn = document.querySelector('#locate-user-btn')
         locateBtn.addEventListener('click', _ => events.onLocateBtnClicked());
 
-        const tags = document.querySelector('#tag-selection');
-        const tagTypes = tags.querySelector('#tag-types').children;
-        const tagStyles = tags.querySelector('#tag-styles').children;
+        // Set eventhandlers to tag switches
+        const tagTypes = document.querySelector('#tag-types').children;
+        const tagStyles = document.querySelector('#tag-styles').children;
 
         for (let i = 0; i < tagTypes.length; i++) {
             const elem = tagTypes[i];
@@ -130,14 +133,15 @@ export const ui = {
         const clearSearchBtn = document.querySelector('#clear-search-btn')
         const searchInput = document.querySelector('#search-input');
 
-        clearSearchBtn.addEventListener('click', e => {
+        clearSearchBtn.addEventListener('click', _ => {
             this.clearSearchBar();
             if (map.locations.anyHidden()) {
                 map.locations.popCacheToMap();
             }
         });
 
-        searchBtn.addEventListener('click', e => {
+        // Set eventHandlers to 
+        searchBtn.addEventListener('click', _ => {
             const query = searchInput.value;
             if (query) {
                 events.locationSearch(query);
@@ -145,6 +149,12 @@ export const ui = {
             }
         });
     },
+
+    /**
+     * 
+     * @param {*} selector 
+     * @param {*} visible 
+     */
     setElemVisibility: function(selector, visible) {
         if (visible) {
             document.querySelector(selector).classList.remove('hidden');
@@ -153,13 +163,17 @@ export const ui = {
         }
     },
 
+    /**
+     * 
+     * @param {*} bar 
+     * @param {*} routes 
+     * @param {*} loc 
+     */
     renderBarInfo: function(bar, routes, loc) {
         this.toggleLocationPanel('up');
 
         this.setElemVisibility('#close-route-btn', false);
         this.setElemVisibility('#route-instructions', false);
-
-        const routePanel = document.querySelector('#route-panel');
 
         this.setElemVisibility('#bar-info', true);
         const barName = document.querySelector('#bar-name');
@@ -172,6 +186,12 @@ export const ui = {
         this.renderRouteList(routes, loc);
     },
 
+    /**
+     * 
+     * @param {*} routes 
+     * @param {*} destination 
+     * @param {*} exclude 
+     */
     renderRouteList: function(routes, destination, exclude=null) {
         const routeList = document.querySelector('#route-list');
 
@@ -214,6 +234,12 @@ export const ui = {
         });
     },
 
+    /**
+     * 
+     * @param {*} route 
+     * @param {*} destination 
+     * @param {*} event 
+     */
     renderRoute: function(route, destination, event=null) {
 
         // Clear the map from other destination markers
@@ -292,24 +318,29 @@ export const ui = {
         });
 
         // Focus map to view the whole route
-        map.view.fitBounds(
-            map._layers.routes.getBounds(),
-            {
-                padding: [50,50],
-                maxZoom: 16
-            }
-        );
+        map.view.fitBounds(map._layers.routes.getBounds(), map.view.options.bounds);
     },
     
+    /**
+     * Atm displays error to the console.
+     * @param {Error} err 
+     */
     renderError: function(err) {
         console.error(err);
     },
 
+    /**
+     * Clears the search text input value
+     */
     clearSearchBar: function() {
         const searchInput = document.querySelector('#search-input');
         searchInput.value = '';
     },
 
+    /**
+     * Toggle location panel reveal animation
+     * @param {string} direction 'up' means up, 'down' means down :) 
+     */
     toggleLocationPanel: function(direction) {
         const routePanel = document.querySelector('#route-panel');
         if (direction === 'up') {
@@ -322,9 +353,18 @@ export const ui = {
             }
         }
     },
+
+    /**
+     * Display loading spinner while app
+     * is waiting data
+     */
     showLoadingSpinner: function() {
         this.setElemVisibility('#spinner', true);
     },
+
+    /**
+     * Removes spinner from the view.
+     */
     hideLoadingSpinner: function() {
         this.setElemVisibility('#spinner', false);
     }

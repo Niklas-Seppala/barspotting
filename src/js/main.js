@@ -14,7 +14,7 @@ window.onload = async () => {
     ui.showLoadingSpinner();
 
     map.create('map');
-    map.view.setTo(map.newPos(60.160095, 24.942513));
+    map.view.setTo(map.newPos(60.160095, 24.942513)); // Helsinki
     map.gps.on('found', events.onLocationFound);
     map.gps.on('error', events.onLocationError);
 
@@ -108,7 +108,7 @@ export function timeDiff(time1, time2) {
 */
 export function formatTime(timeStamp) {
     // evil oneliner to pad with zeroes
-    const d = (x) => x<10 ? "0"+x : x;
+    const d = (x) => x < 10 ? '0' + x : x;
 
     const date = new Date(timeStamp);
 

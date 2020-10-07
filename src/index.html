@@ -25,14 +25,11 @@
 </head>
 <body>
     <header>
-        <!-- <section id="banner">
-            <img src="img/barspotting_banner.jpg" alt="">
-        </section> -->
         <section id="menu-panel">
             <h1>BARSPOTTING</h1>
             <div class="btn-container" id="menu-icons">
-                <div id="locate-user-btn" class="btn header-btn"><img src="./icons/marker-icon.png" alt="menu"></div>
-                <a href="./presentation.html"><div class="btn header-btn"><img src="./icons/info-icon.png" alt="menu"></div></a>
+                <div id="locate-user-btn" class="btn header-btn"><img src="./icons/marker-icon.png" alt="locate"></div>
+                <a href="./presentation.html"><div class="btn header-btn"><img src="./icons/info-icon.png" alt="info"></div></a>
             </div>
         </section>
         <section id="settings-panel">
@@ -40,25 +37,31 @@
                 <img src="./icons/expand-icon.png" alt="menu">
             </div>
 
-            <div class="text-input">
-                <input id="search-input" type="text">
-                <div class="btn search-btn" id="clear-search-btn"><img src="./icons/close-icon.png" alt="X"></div>
-                <div class="btn search-btn" id="search-btn"><img src="./icons/search.png" alt=""></div>
+            <div id="img-box">
+                <img id="some-img" src="./img/banner.jpg" alt="">
             </div>
 
-            <div id="tag-selection">
-                <div>
-                    <ul class="tags " id="tag-types">
-                        <li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Baari</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Yökerho</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Kahvila</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Pubi</label></div></li>
-                    </ul>
+            <div id="search-container">
+
+                <div class="text-input">
+                    <input id="search-input" type="text">
+                    <div class="btn search-btn" id="clear-search-btn"><img src="./icons/close-icon.png" alt="X"></div>
+                    <div class="btn search-btn" id="search-btn"><img src="./icons/search.png" alt="search"></div>
                 </div>
-                <div>
-                    <ul class="tags" id="tag-styles">
-                        <li><div class="slider-checkbox"><input type="checkbox"><label class="label">Biljardi</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Live musiikki</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Metalli</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Olut</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Karaoke</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Rock</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Sportti</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">LGBT</label></div></li>
-                    </ul>
+    
+                <div id="tag-selection">
+                    <div>
+                        <ul class="tags " id="tag-types">
+                            <li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Baari</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Yökerho</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Kahvila</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Pubi</label></div></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul class="tags" id="tag-styles">
+                            <li><div class="slider-checkbox"><input type="checkbox"><label class="label">Biljardi</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Live musiikki</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Metalli</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Olut</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Karaoke</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Rock</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Sportti</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">LGBT</label></div></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-
         </section>
     </header>
 
@@ -68,7 +71,7 @@
         </div>
         <section id="route-panel">
             <div id="bar-info-header">
-                <a id="bar-link" target="_blank" href="#"><h3 id="bar-name"></h3><img src="./icons/link-light-icon.png" alt=""></a>
+                <a id="bar-link" target="_blank" href="#"><h3 id="bar-name"></h3><img src="./icons/link-light-icon.png" alt="link"></a>
                 <div class="btn route-panel-btn" id="route-panel-close-btn">
                     <img class="small-icon" src="./icons/close-light-icon.png" alt="routes">
                 </div>
