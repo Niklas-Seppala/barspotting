@@ -13,6 +13,9 @@ window.onload = () => {
 
     ui.showLoadingSpinner();
     map.create('map');
+    
+    map.view.setTo(map.newPos(60.160095, 24.942513));
+
     map.gps.on('found', events.onLocationFound);
     map.gps.on('error', events.onLocationError);
 

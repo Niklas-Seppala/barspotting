@@ -38,7 +38,7 @@ export const map = {
      * @param {string} elemId element id of the element where the map will be located.
      */
     create: function (elemId) {
-        this._instance = L.map(elemId).fitWorld();
+        this._instance = L.map(elemId);
         L.tileLayer(
             'https://cdn.digitransit.fi/map/v1/hsl-map/{z}/{x}/{y}.png',
             {

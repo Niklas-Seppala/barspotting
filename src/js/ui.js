@@ -289,6 +289,13 @@ export const ui = {
                 map.view.zoomTo([leg.from.lat, leg.from.lon], 16, 17);
             });
         });
+        map.view.fitBounds(
+            map._layers.routes.getBounds(),
+            {
+                padding: [150,150],
+                maxZoom: 16
+            }
+        );
     },
     
     renderError: function(err) {
