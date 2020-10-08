@@ -66,35 +66,15 @@ const graphQl = {
 /**
  * 
  */
-export const locationAPI = {
-    /**
-    * Sends async API call to open-api.myhelsinki.fi for
-    * all the locations that contain 'Pizza'-tag. Tags and meta
-    * are excluded from response object.
-    * 
-    * @returns {object[]} collection containing
-    *      pizza locations in helsinki.
-    */
-    getPizzaAsync: async function () {
-        const url = `${CORS_PROXY}http://open-api.myhelsinki.fi/v1/places/?tags_search=Pizza`;
-        try {
-            const response = await fetch(url);
-            const data = await response.json()
-            return data.data; // Extract only the important data
-        } catch (error) {
-            console.error(error.message);
-        }
-    },
-
+export const api = {
     /**
      * Sends async API call to open-api.myhelsinki.fi for
      * all the bars and nightlife locations. Tags and meta
      * are excluded from response object.
      * 
-     * @returns {object[]} collection containing
-     *      bar and nightlife locations in Helsinki.
+     * @returns {object[]} collection of bars from API.
      */
-    getNightlifeAsync: async function () {
+    getBarsAsync: async function () {
         const url = `${CORS_PROXY}http://open-api.myhelsinki.fi/v1/places/?tags_search=BARS%20%26%20NIGHTLIFE`;
         try {
             const response = await fetch(url);
@@ -106,11 +86,33 @@ export const locationAPI = {
     },
 
     /**
-     * Gets (bar/food) destinations using specified tags.
-     * Query can be exclusive or inclusive.
+     * Gets the routes from specified location to destination
+     * using HSL route planning api.
+     * @param {object} fromPosition start position coords
+     * @param {object} toPosition destination position coords
+     * 
+     * @returns {object} Collection of 3 route objects to destination.
+     */
+    getRoutesToBarAsync: async function (fromPosition, toPosition) {
+        try {
+            // fill the request body with graphQl query
+            graphQl.options.body = graphQl.getRouteToDest(fromPosition, toPosition, 3);
+            const response = await fetch(DIGITRANSIT_URL, graphQl.options);
+            return (await response.json()).data.plan.itineraries; // take only the routes
+        } catch (error) {
+            console.error(error);
+            return false;
+        } finally {
+            // clear the request body
+            graphQl.options.body = null;
+        }
+    },
+
+    /**
+     * Filters the locations using location tags.
      * 
      * @param {object[]} locations location collection.
-     * @param {string[]} tagArray tag collection to use in query.
+     * @param {string[]} tagArray tag collection to use in filtering.
      * 
      * @returns {string[]} location id array
      */
@@ -122,9 +124,12 @@ export const locationAPI = {
     },
     
     /**
+     * Filters the locations by comparing location
+     * names. Substrings included.
+     * @param {Array} locations Collection of location objects.
+     * @param {string} name name used in filtering
      * 
-     * @param {Array} locations 
-     * @param {string} name 
+     * @returns {string[]} array of location ids
      */
     filterLocationsByName: function(locations, name) {
         name = name.toUpperCase();
@@ -133,19 +138,4 @@ export const locationAPI = {
          || loc.name.fi.toUpperCase().startsWith(name))
             .map(loc => loc.id);
     }
-}
-
-export const routesAPI = {
-    getRoutesToBarAsync: async function (fromPosition, toPosition) {
-        try {
-            graphQl.options.body = graphQl.getRouteToDest(fromPosition, toPosition, 3);
-            const response = await fetch(DIGITRANSIT_URL, graphQl.options);
-            return (await response.json()).data.plan.itineraries;
-        } catch (error) {
-            console.error(error);
-            return false;
-        } finally {
-            graphQl.options.body = null;
-        }
-    },
 }

@@ -4,6 +4,11 @@ const FIVE_BIT_MASK = 0x1f;
 const SIX_BITS = 0x20;
 const CHAR_OFFSET = 0x3f;
 
+/**
+ * Module to encode/decode polylines using
+ * google polyline algorithm.
+ * https://developers.google.com/maps/documentation/utilities/polylinealgorithm
+ */
 export const polyline = {
     /**
      * Encodes coordinate array using Google-polyline
@@ -28,6 +33,7 @@ export const polyline = {
             lastLat = lat; // update latest processed coordinate
             lastLon = lon;
         }
+        // char array to string
         return String.fromCharCode(...charArr);
     },
 
@@ -48,10 +54,13 @@ export const polyline = {
             // decode latitude
             sum = leftShift = 0;
             do {
-                char = encodedStr.charCodeAt(i++) - CHAR_OFFSET;
+                char = encodedStr.charCodeAt(i++) - CHAR_OFFSET; // reverse char offset
+                // five bits gets added to left side of the sum.
                 sum |= (char & FIVE_BIT_MASK) << leftShift;
+                // update left shift 5 bits further
                 leftShift += 5;
             } while (char >= SIX_BITS);
+            // deal with negative numbers
             lat += (sum & 1) == 1 ? ~(sum >> 1) : (sum >> 1);
 
             // decode longitude
@@ -73,19 +82,18 @@ export const polyline = {
 /**
  * Encodes single coordinate to char and pushes
  * it to char array.
- * @param {number[]} charArr 
- * @param {number} coord 
+ * @param {number[]} charArr array to store encoded coordinates as chars
+ * @param {number} coord lat/lon
  */
 function encodeCoord(charArr, coord) {
     // flip all bits if coord value is negative, then left shift by 1
-    let remaining = coord < 0 ? (~coord) << 1 : coord << 1;
+    let chunk = coord < 0 ? (~coord) << 1 : coord << 1;
 
-    // consume binary value 5 bits at the time and convert it to
-    // char by adding 63 to 5-bit chunk.
-    while (remaining >= SIX_BITS) {
-        charArr.push((0x20 | (remaining & FIVE_BIT_MASK)) + CHAR_OFFSET);
-        remaining >>= 5;
+    while (chunk >= SIX_BITS) {
+        // take first 5 rightmost bits using mask and OR them with 0x20, add char offset
+        charArr.push((0x20 | (chunk & FIVE_BIT_MASK)) + CHAR_OFFSET);
+        chunk >>= 5; // shift another 5 bits
     }
     // trailing chunk doesn't require OR'ing
-    charArr.push(remaining + CHAR_OFFSET);
+    charArr.push(chunk + CHAR_OFFSET);
 }

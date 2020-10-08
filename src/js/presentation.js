@@ -48,5 +48,3 @@ prvButton.addEventListener('click', (evt) => {
 	}
 	showArticle(visibleArticleIndex);
 });
-
-//showArticle(0);

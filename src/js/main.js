@@ -2,39 +2,46 @@
 
 import { map } from "./map.js";
 import { ui } from "./ui.js"
-import { locationAPI } from "./data.js";
+import { api } from "./data.js";
 
-let bars;
-let locateTogle = true;
+let bars; // all the bar locations
+let locateFlag = true;
 
 window.onload = async () => {
-    const fetchBars = locationAPI.getNightlifeAsync();
+    // start fetching the static api data
+    const fetchBars = api.getBarsAsync();
     
     ui.init();
     ui.showLoadingSpinner();
 
     map.create('map');
-    map.view.setTo(map.newPos(60.160095, 24.942513));
-    map.gps.on('found', events.onLocationFound);
-    map.gps.on('error', events.onLocationError);
+    map.view.setTo(map.newPos(60.160095, 24.942513)); // Position in central helsinki
+
+    // GPS event handlers
+    map.gps.on('found', actions.onLocationFound);
+    map.gps.on('error', actions.onLocationError);
 
     bars = await fetchBars;
+
+    // create and store the location markers.
     map.locations.create(bars, map.options.markers.bar);
-    events.onLocationParamsChange();
+
+    actions.updateMarkers();
+
     ui.hideLoadingSpinner();
 }
 
-export const events = {
+export const actions = {
     onLocationFound: function(position) {
 
         // Update user's position
         map.user.position = map.newPos(position.latlng.lat, position.latlng.lng);
 
-        if (locateTogle) {
+        if (locateFlag) {
             // Only run the first time
             map.user.marker.create();
             map.view.focus(); // because of this. // TODO: make more sense of this
-            locateTogle = false;
+            locateFlag = false;
         } else {
             map.user.marker.move(map.user.position);
         }
@@ -48,14 +55,19 @@ export const events = {
         map.view.focus();
     },
 
-    locationSearch: function(query) {
+    /**
+     * Updates te searched locations to map, old map state
+     * is cached for future use.
+     * @param {string} searchName 
+     */
+    updateSearchedMarkers: function(searchName) {
         if (map._layers.locations) {
             map.locations.cache();
             map.locations.clear();
             map.locations.focusGroup.clearLayers();
         }
 
-        const filteredIds = locationAPI.filterLocationsByName(bars, query);
+        const filteredIds = api.filterLocationsByName(bars, searchName);
         filteredIds.forEach(id => {
             map._layers.locations.addLayer(map.locations._markerPool[id]);
             map.locations.focusGroup.addLayer(map.locations._markerPool[id]);
@@ -63,15 +75,20 @@ export const events = {
         map.view.fitBounds(map.locations.focusGroup.getBounds());
     },
 
-    onLocationParamsChange: function () {
+    /**
+     * Updates the markers diplayed to ui
+     */
+    updateMarkers: function () {
+        // Clear any previous markers
         if (map._layers.locations) {
             map.locations.clear();
         }
-        const filteredBarIds = locationAPI.filterLocationsByTags(bars, ui.locationTags.styles
+
+        const filteredBarIds = api.filterLocationsByTags(bars, ui.locationTags.styles
             .concat(ui.locationTags.types)
-            .filter(tag => tag.include)
+            .filter(tag => tag.include) // check if tag is selected active in the ui
             .map(tag => tag.tag)
-            .flat());
+            .flat()); // some tags got two "internal" tags
         
         filteredBarIds.forEach(id => {
             map._layers.locations.addLayer(map.locations._markerPool[id])

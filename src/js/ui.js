@@ -1,14 +1,9 @@
 'use strict'
 
-import { events, formatTime, timeDiff } from "./main.js";
+import { actions, formatTime, timeDiff } from "./main.js";
 import { map, calculateDistance } from "./map.js";
 
 export const ui = {
-
-    userOptions: {
-        rangeInKm: 20,
-        includePizzas: false
-    },
     modes : {
         'WALK': {
             instruction: 'Kävele',
@@ -101,7 +96,7 @@ export const ui = {
 
         // locate button
         const locateBtn = document.querySelector('#locate-user-btn')
-        locateBtn.addEventListener('click', _ => events.onLocateBtnClicked());
+        locateBtn.addEventListener('click', _ => actions.onLocateBtnClicked());
 
         const tags = document.querySelector('#tag-selection');
         const tagTypes = tags.querySelector('#tag-types').children;
@@ -113,7 +108,7 @@ export const ui = {
             checkbox.addEventListener('change', _ => {
                 const include = this.locationTags.types[i].include;
                 this.locationTags.types[i].include = !include
-                events.onLocationParamsChange();
+                actions.updateMarkers();
             })
         }
         for (let i = 0; i < tagStyles.length; i++) {
@@ -122,7 +117,7 @@ export const ui = {
             checkbox.addEventListener('change', _ => {
                 const include = this.locationTags.styles[i].include;
                 this.locationTags.styles[i].include = !include
-                events.onLocationParamsChange();
+                actions.updateMarkers();
             })
         }
 
@@ -140,7 +135,7 @@ export const ui = {
         searchBtn.addEventListener('click', e => {
             const query = searchInput.value;
             if (query) {
-                events.locationSearch(query);
+                actions.updateSearchedMarkers(query);
                 this.toggleLocationPanel('down');
             }
         });
@@ -158,8 +153,6 @@ export const ui = {
 
         this.setElemVisibility('#close-route-btn', false);
         this.setElemVisibility('#route-instructions', false);
-
-        const routePanel = document.querySelector('#route-panel');
 
         this.setElemVisibility('#bar-info', true);
         const barName = document.querySelector('#bar-name');
@@ -187,7 +180,6 @@ export const ui = {
             temp = temp.length === 0 ? ['WALK'] : temp;
             const travelModes = temp.map(m => this.modes[m].mode).join(', ')
 
-
             const firstLeg = route.legs[0];
             const lastLeg = route.legs[route.legs.length-1];
 
@@ -199,25 +191,19 @@ export const ui = {
             if (duration[0] > 0) {
                 durationString = `${duration[0]}h ` + durationString;
             }
-
             const routeItem = document.createElement('li');
+            routeItem.classList.add('btn');
+            routeItem.classList.add('route-btn');
             routeItem.classList.add('route');
+            routeItem.addEventListener('click', evt => {
+                this.renderRoute(route, destination, evt);
+            });
             routeItem.innerHTML = `
-                <span>
-                    <time>${startTimeString}-${endTimeString} (${durationString})</time>
-                    <span>${travelModes}</span>
-                </span>
+            <time>${startTimeString}</time><span>&nbsp;-&nbsp;</span><time>${endTimeString}</time>
+            <span>&nbsp;${travelModes} (${durationString})</span>
             `;
 
-            const routeContainer = document.createElement('div');
-            routeContainer.classList.add('btn');
-            routeContainer.classList.add('route-btn');
-            routeContainer.addEventListener('click', evt => {
-                this.renderRoute(route, destination, evt);
-            })
-
-            routeContainer.appendChild(routeItem);
-            routeList.appendChild(routeContainer);
+            routeList.appendChild(routeItem);
         });
     },
 
@@ -226,68 +212,64 @@ export const ui = {
         // Clear the map from other destination markers
         map.locations.onlyDisplayFocused(destination.id);
 
-        // Display back button
         this.setElemVisibility('#close-route-btn', true);
 
+        // update css classes
         if (event != null) {
-            // Remove old active css classes
             event.target.closest("ul").querySelectorAll('.active-route')
                 .forEach(elem => elem.classList.remove('active-route'));
 
-            // get pressed button;
             const routeBtn = event.target.classList.contains('btn') 
                 ? event.target
                 : event.target.closest('.btn');
 
-            // set it active
             routeBtn.classList.add('active-route');
         }
 
-        // from map
+        // Clear the routes from ui
         map.routes.clear();
-        // from panel
         document.querySelectorAll(".route-leg-container").forEach(leg => {
             leg.remove();
         });
 
+        // hide bar description and display route instructions
         this.setElemVisibility('#bar-info', false);
         const routeInstructionsList = document.querySelector('#route-instructions');
         routeInstructionsList.classList.remove('hidden');
 
         route.legs.forEach((leg, i) => {
             
-            const container = document.createElement('div');
-            container.classList.add('btn');
-            container.classList.add('route-leg-container');
+            // const routeInstruction = document.createElement('div');
+            const routeInstruction = document.createElement('li');
+            routeInstruction.classList.add('btn');
+            routeInstruction.classList.add('route-leg');
 
-            let routeStringParts = [];
+            // Leg click eventhandler
+            routeInstruction.addEventListener('click', _ => {
+                map.view.zoomTo([leg.from.lat, leg.from.lon], 16, 17);
+            });
 
-            const timeElem = document.createElement('time');
-            timeElem.classList.add('leg-time');
-            timeElem.textContent = `${formatTime(leg.startTime)} - ${formatTime(leg.endTime)}`
+            const legTime = document.createElement('div');
+            legTime.innerHTML = 
+                `<time>${formatTime(leg.startTime)}</time><span>&nbsp;-&nbsp;</span><time>${formatTime(leg.endTime)}</time>`
+            routeInstruction.appendChild(legTime);
 
-            container.appendChild(timeElem);
-
-            const destString = i != route.legs.length-1
-                ? leg.to.name
-                : destination.name.fi;
-
-            routeStringParts.push(`${this.modes[leg.mode].instruction} kohteeseen ${destString}`);
+            // const timeElem = document.createElement('time');
+            // timeElem.classList.add('leg-time');
+            // timeElem.textContent = `${formatTime(leg.startTime)} - ${formatTime(leg.endTime)}`
+            // routeInstruction.appendChild(timeElem);
 
             let detailStr = '';
-            
             if (leg.mode == "WALK") {
                 const distance = calculateDistance(leg.from.lat, leg.from.lon, leg.to.lat, leg.from.lon);
                 detailStr = `${(distance/1000).toFixed(2)}km`;
-    
                 if (distance < 1000) {
                     detailStr = `${(distance).toFixed(0)}m`;
                 }
             }
 
-            const legItem = document.createElement('li');
-
-            legItem.classList.add('route-leg');
+            // const legItem = document.createElement('li');
+            // legItem.classList.add('route-leg');
 
             if (leg.intermediateStops.length > 0) {
                 detailStr = `${leg.intermediateStops.length} stops`;
@@ -296,34 +278,28 @@ export const ui = {
                 detailStr = `1 stop`;
             }
 
-            legItem.innerHTML = `
-            <span>
-                ${routeStringParts.join(" - ")}
-            </span>`;
-            container.appendChild(legItem);
+            // Create directions to route leg element
+            const destString = i != route.legs.length-1 ? leg.to.name : destination.name.fi;
+            const directions = document.createElement('span');
+            directions.textContent = `${this.modes[leg.mode].instruction} kohteeseen ${destString}`;
+            routeInstruction.appendChild(directions)
+
+            // const destString = i != route.legs.length-1 ? leg.to.name : destination.name.fi;
+            // legItem.innerHTML = `<span>${`${this.modes[leg.mode].instruction} kohteeseen ${destString}`}</span>`;
+            // routeInstruction.appendChild(legItem);
 
             const detailElem = document.createElement('span');
             detailElem.textContent = detailStr;
-            container.appendChild(detailElem);
+            routeInstruction.appendChild(detailElem);
 
+            routeInstructionsList.appendChild(routeInstruction);
 
-            routeInstructionsList.appendChild(container);
-
+            // draw new routes to map
             map.routes.draw(leg, map.options.routes[leg.mode], true);
-
-            container.addEventListener('click', _ => {
-                map.view.zoomTo([leg.from.lat, leg.from.lon], 16, 17);
-            });
         });
 
         // Focus map to view the whole route
-        map.view.fitBounds(
-            map._layers.routes.getBounds(),
-            {
-                padding: [50,50],
-                maxZoom: 16
-            }
-        );
+        map.view.fitBounds(map._layers.routes.getBounds());
     },
     
     renderError: function(err) {
@@ -335,6 +311,10 @@ export const ui = {
         searchInput.value = '';
     },
 
+    /**
+     * Location panel slide animation
+     * @param {string} direction 'up' is up, 'down' is down
+     */
     toggleLocationPanel: function(direction) {
         const routePanel = document.querySelector('#route-panel');
         if (direction === 'up') {

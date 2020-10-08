@@ -1,6 +1,6 @@
 'use strict'
 
-import { routesAPI } from "./data.js";
+import { api } from "./data.js";
 import { ui } from "./ui.js";
 import { polyline } from "./polyline.js";
 
@@ -195,7 +195,7 @@ export const map = {
                     ui.toggleLocationPanel('down');
 
                     ui.showLoadingSpinner();
-                    const routes = await routesAPI.getRoutesToBarAsync(map.user.position, loc.location);
+                    const routes = await api.getRoutesToBarAsync(map.user.position, loc.location);
                     if (routes) {
                         ui.renderBarInfo(marker.options, routes, loc);
                         ui.hideLoadingSpinner();
@@ -304,7 +304,7 @@ export const map = {
              * 
              */
             bounds: {
-                padding: [2,2],
+                padding: [50,50],
                 maxZoom: 16
             },
 

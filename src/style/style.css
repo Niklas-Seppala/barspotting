@@ -189,7 +189,13 @@ h1 {
     background: linear-gradient(0deg, rgba(44,89,126,1) 0%, rgb(49, 97, 136) 100%);
 }
 
-.route-leg { cursor: pointer; }
+.route-leg {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+}
 
 
 #map { position: relative; }
@@ -398,7 +404,7 @@ h1 {
     }
     #bar-name { font-size: 24px; }
     .route-btn { font-size: 20px;}
-    .route-leg-container { font-size: 15px; }
+    .route-leg { font-size: 15px; }
     #bar-description {
         
     font-size: 16px;
