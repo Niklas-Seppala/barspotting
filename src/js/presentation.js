@@ -6,7 +6,6 @@ const articleMaxIndex = articles.length - 1;
 
 let visibleArticleIndex = 0;
 
-
 const changeVisibility = (elem, visible) => {
 	if (visible == true) {
 		elem.classList.remove('hidden');
@@ -14,12 +13,6 @@ const changeVisibility = (elem, visible) => {
 		elem.classList.add('hidden');
 	}
 };
-
-/*
-document.querySelectorAll("article").forEach((el, key) => {
-	changeVisibility(el, false);
-});
-*/
 
 const showArticle = (index) => {
 	document.querySelectorAll("article").forEach((el, key) => {

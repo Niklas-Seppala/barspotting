@@ -24,7 +24,7 @@ header {
 
 ul {
     list-style: none;
-    padding-inline-start: 0;
+    padding-left: 0px;
 }
 
 h1 {
@@ -48,7 +48,6 @@ h1 {
 
 #settings-panel {
     display: flex;
-    /* flex-direction: column; */
     justify-content: center;
     align-items: center;
     position: absolute;
