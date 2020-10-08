@@ -203,8 +203,8 @@ h1 {
 }
 
 #route-instructions, #route-list section { 
-    overflow-y: auto;
-    max-height: 100px;
+    /* overflow-y: auto;
+    max-height: 100px; */
 }
 
 
@@ -217,8 +217,12 @@ h1 {
     bottom: -290px;
     background: #0d192499;
     width: 100%;
-    box-sizing: border-box;
+    overflow-y: auto;
 }
+
+#route-panel::-webkit-scrollbar { width: 5px; }
+#route-panel::-webkit-scrollbar-track { background: #00000000; }
+#route-panel::-webkit-scrollbar-thumb { background-color: #122330;}
 
 #close-route-btn {
     position: absolute;
@@ -393,8 +397,19 @@ h1 {
     padding-bottom: 15px;
 }
 
-/* Banner */
+
+
 @media screen and (min-width: 750px) {
+
+    #bar-name { font-size: 24px; }
+    .route-btn { font-size: 20px;}
+    .route-leg-container { font-size: 15px; }
+    #bar-description {
+        
+    font-size: 16px;
+    }
+
+    /* Banner */
     #settings-panel {
         justify-content: flex-start;
     }
