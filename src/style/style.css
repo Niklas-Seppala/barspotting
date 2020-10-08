@@ -48,7 +48,7 @@ h1 {
 
 #settings-panel {
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     justify-content: center;
     align-items: center;
     position: absolute;
@@ -378,4 +378,38 @@ h1 {
     justify-content: center;
     align-items: center;
     margin-bottom: 5px;
+}
+
+#some-img { /* Distract the ad-blockers */
+    height: 220px;
+}
+#img-box {display: none;}
+#img-box {
+    background-color: #1e3e59;
+    position: absolute;
+    right: 0;
+    top: 13px;
+    padding-left: 18px;
+    padding-bottom: 15px;
+}
+
+/* Banner */
+@media screen and (min-width: 750px) {
+    #settings-panel {
+        justify-content: flex-start;
+    }
+    #img-box { display: unset; }
+    #some-img { height: 170px; }
+    #search-container {margin-left: 10px;}
+
+    @media screen and (min-width: 1000px) {
+        #some-img { height: 210px; }
+        #search-container {margin-left: 100px;}
+
+        @media screen and (min-width: 1350px) {
+            #settings-panel { justify-content: center; }
+            #search-container { margin-left: 0px; }
+            #some-img { height: 220px; }
+        }
+    }
 }
