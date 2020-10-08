@@ -40,7 +40,7 @@ export const actions = {
         if (locateFlag) {
             // Only run the first time
             map.user.marker.create();
-            map.view.focus(); // because of this. // TODO: make more sense of this
+            map.view.focus(); // because of this.
             locateFlag = false;
         } else {
             map.user.marker.move(map.user.position);

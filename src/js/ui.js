@@ -49,6 +49,10 @@ export const ui = {
         ]
     },
 
+    /**
+     * Initializes ui components.
+     * (Adds eventhandlers)
+     */
     init: function() {
         // set menu slider click events
         const menuBtn = document.querySelector('#settings-panel-button');
@@ -140,6 +144,12 @@ export const ui = {
             }
         });
     },
+
+    /**
+     * Helper functio to hide and display elements
+     * @param {string} selector css selector syntax
+     * @param {boolean} visible true => visible
+     */
     setElemVisibility: function(selector, visible) {
         if (visible) {
             document.querySelector(selector).classList.remove('hidden');
@@ -148,6 +158,10 @@ export const ui = {
         }
     },
 
+    /**
+     * Renders selected bar's name, description etc.
+     * to bar panel at the bottom of the screen.
+     */
     renderBarInfo: function(bar, routes, loc) {
         this.toggleLocationPanel('up');
 
@@ -165,15 +179,22 @@ export const ui = {
         this.renderRouteList(routes, loc);
     },
 
+    /**
+     * 
+     * @param {*} routes 
+     * @param {*} destination 
+     * @param {*} exclude 
+     */
     renderRouteList: function(routes, destination, exclude=null) {
         const routeList = document.querySelector('#route-list');
 
         document.querySelectorAll(".route-btn").forEach(x => {
             x.remove();
         });
+
+        // Create each route element
         routes.forEach((route) => {
 
-            // Filter walk leg modes.
             const m = [];
             route.legs.forEach(leg => m.push(leg.mode));
             let temp = [...new Set(m.filter(mode => mode !== 'WALK'))];
@@ -207,6 +228,13 @@ export const ui = {
         });
     },
 
+    /**
+     * Draws route polyline to map, and and details about
+     * the journey to route panel.
+     * @param {object} route 
+     * @param {destination} destination
+     * @param {Event} event 
+     */
     renderRoute: function(route, destination, event=null) {
 
         // Clear the map from other destination markers
@@ -254,11 +282,6 @@ export const ui = {
                 `<time>${formatTime(leg.startTime)}</time><span>&nbsp;-&nbsp;</span><time>${formatTime(leg.endTime)}</time>`
             routeInstruction.appendChild(legTime);
 
-            // const timeElem = document.createElement('time');
-            // timeElem.classList.add('leg-time');
-            // timeElem.textContent = `${formatTime(leg.startTime)} - ${formatTime(leg.endTime)}`
-            // routeInstruction.appendChild(timeElem);
-
             let detailStr = '';
             if (leg.mode == "WALK") {
                 const distance = calculateDistance(leg.from.lat, leg.from.lon, leg.to.lat, leg.from.lon);
@@ -267,9 +290,6 @@ export const ui = {
                     detailStr = `${(distance).toFixed(0)}m`;
                 }
             }
-
-            // const legItem = document.createElement('li');
-            // legItem.classList.add('route-leg');
 
             if (leg.intermediateStops.length > 0) {
                 detailStr = `${leg.intermediateStops.length} stops`;
@@ -283,10 +303,6 @@ export const ui = {
             const directions = document.createElement('span');
             directions.textContent = `${this.modes[leg.mode].instruction} kohteeseen ${destString}`;
             routeInstruction.appendChild(directions)
-
-            // const destString = i != route.legs.length-1 ? leg.to.name : destination.name.fi;
-            // legItem.innerHTML = `<span>${`${this.modes[leg.mode].instruction} kohteeseen ${destString}`}</span>`;
-            // routeInstruction.appendChild(legItem);
 
             const detailElem = document.createElement('span');
             detailElem.textContent = detailStr;
