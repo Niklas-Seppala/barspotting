@@ -29,25 +29,6 @@
             </div>
         </section>
     </header>
-    <!-- 
-       <article>
-            <h2>Lorem</h2>
-            <figure>
-                <img src="https://www.placecage.com/500/200.jpg"/>
-            <figcaption>
-               Lorem ipsum
-            </figcaption>
-            </figure>
-        </article> 
-    -->
-
-    <!--
-    <article>
-        <h2>Lorem</h2>
-        <p>Lorem ipsum dolor sit amet</p>
-    </article> 
-    -->
-
     <main>
         <article>
             <h2>Mistä sovellukseen?</h2>
@@ -240,12 +221,43 @@ getNightlifeAsync: async function () {
                 </section>
 
                 <h4>CSS-esimerkki</h4>
-                <code>
-                    @keyframes spin {<br/>&nbsp;&nbsp;0% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform:rotate(0deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;16.6% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform:rotate(30deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;33.3% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(0deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;50% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(-30deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;66.6% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(0deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;83.3% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(30deg);<br/>&nbsp;&nbsp;}<br/>&nbsp;&nbsp;100% {<br/>&nbsp;&nbsp;&nbsp;&nbsp;transform: rotate(0deg);<br/>&nbsp;&nbsp;}<br/>}<br/>
-                    <br/>
-                    <br/>
-                    #spinner {<br/>&nbsp;&nbsp;font-size: 25px;<br/>&nbsp;&nbsp;font-family: 'Righteous', cursive;<br/>&nbsp;&nbsp;width: 200px;<br/>&nbsp;&nbsp;height: 200px;<br/>&nbsp;&nbsp;position: fixed;<br/>&nbsp;&nbsp;top: 50%;<br/>&nbsp;&nbsp;left: 50%;<br/>&nbsp;&nbsp;margin-left: -100px;<br/>&nbsp;&nbsp;margin-top: -100px;<br/><br/>&nbsp;&nbsp;animation-name: spin;<br/>&nbsp;&nbsp;animation-duration: 2000ms;<br/>&nbsp;&nbsp;animation-iteration-count: infinite;<br/>&nbsp;&nbsp;animation-timing-function: linear;<br/>&nbsp;&nbsp;animation-direction: alternate;<br/>&nbsp;&nbsp;background-color: #1f425f;<br/>&nbsp;&nbsp;border-radius: 100px;<br/>&nbsp;&nbsp;text-align: center;<br/>&nbsp;&nbsp;line-height: 200px;<br/>}
-                 </code>
+                <pre>
+                    <code class="language-css">
+#spinner {
+    font-size: 25px;
+    font-family: 'Righteous', cursive;
+    width: 200px;
+    height: 200px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -100px;
+    margin-top: -100px;
+    z-index: 2000;
+
+    animation-name: spin;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-direction: alternate;
+    background-color: #1f425f;
+    border-radius: 100px;
+    text-align: center;
+    line-height: 200px;
+}
+
+
+@keyframes spin {
+    0%    { transform:rotate(0deg); }
+    16.6% { transform:rotate(30deg); }
+    33.3% { transform:rotate(0deg); }
+    50%   { transform:rotate(-30deg); }
+    66.6% { transform:rotate(0deg); }
+    83.3% { transform:rotate(30deg); }
+    100%  { transform:rotate(0deg); }
+}
+                     </code>
+                </pre>
             </section>
          </article> 
 

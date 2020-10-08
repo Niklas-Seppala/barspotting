@@ -230,7 +230,7 @@ export const map = {
         },
 
         /**
-         * 
+         * Store map markers to cache dict
          */
         cache: function() {
             for (const key in map._layers.locations._layers) {
@@ -244,7 +244,7 @@ export const map = {
          * Adds all markers in the cache to the
          * map. Clears cache.
          */
-        popCacheToMap: function() {
+        popCache: function() {
             map.locations.clear();
             map.locations._cache.forEach(m => {
                 map._layers.locations.addLayer(m);

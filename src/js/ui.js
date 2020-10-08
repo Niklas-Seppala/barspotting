@@ -93,7 +93,7 @@ export const ui = {
 
         routePanelBtn.addEventListener('click', _ => {
             if (map.locations.anyHidden()) {
-                map.locations.popCacheToMap();
+                map.locations.popCache();
             }
             routePanel.classList.toggle('routes-down');
             map.routes.clear();
@@ -133,7 +133,7 @@ export const ui = {
         clearSearchBtn.addEventListener('click', e => {
             this.clearSearchBar();
             if (map.locations.anyHidden()) {
-                map.locations.popCacheToMap();
+                map.locations.popCache();
             }
         });
 

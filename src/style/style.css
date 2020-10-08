@@ -202,12 +202,6 @@ h1 {
     margin-bottom: 5px;
 }
 
-#route-instructions, #route-list section { 
-    /* overflow-y: auto;
-    max-height: 100px; */
-}
-
-
 #route-list section { margin-left: 5px; }
 
 #route-panel {
@@ -226,7 +220,7 @@ h1 {
 
 #close-route-btn {
     position: absolute;
-    right: 22px;
+    right: 25px;
     padding: 4px;
     border-radius: 4px;
 }
@@ -397,10 +391,11 @@ h1 {
     padding-bottom: 15px;
 }
 
-
-
 @media screen and (min-width: 750px) {
 
+    #close-route-btn {
+        right: 26px;
+    }
     #bar-name { font-size: 24px; }
     .route-btn { font-size: 20px;}
     .route-leg-container { font-size: 15px; }
