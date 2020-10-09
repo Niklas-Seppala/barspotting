@@ -256,7 +256,7 @@ export const ui = {
 
         // Clear the routes from ui
         map.routes.clear();
-        document.querySelectorAll(".route-leg-container").forEach(leg => {
+        document.querySelectorAll(".route-leg").forEach(leg => {
             leg.remove();
         });
 
