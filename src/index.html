@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>BARSPOTTING</title>
+    
+    <!-- fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Krona+One&family=Righteous&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&display=swap" rel="stylesheet">
 
     <!-- leaflet css -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -26,30 +29,36 @@
             <h1>BARSPOTTING</h1>
             <div class="btn-container" id="menu-icons">
                 <div id="locate-user-btn" class="btn"><img src="./icons/marker-icon.png" alt="menu"></div>
-                <div class="btn"><img src="./icons/info-icon.png" alt="menu"></div>
+                <a href="./presentation.html"><div class="btn"><img src="./icons/info-icon.png" alt="menu"></div></a>
             </div>
         </section>
         <section id="settings-panel">
+
+            <div id="img-box">
+                <img id="some-img" src="./img/banner.jpg" alt="">
+            </div>
+
             <div class="btn" id="settings-panel-button">
-                <img src="./icons/settings-icon.png" alt="menu">
+                <img src="./icons/expand-icon.png" alt="menu">
             </div>
-
-            <div class="text-input">
-                <input id="search-input" type="text">
-                <div class="btn" id="search-btn"><img src="./icons/search-icon.png" alt=""></div>
-            </div>
-
-            <div id="tag-selection">
-                <!-- <div class="slider-checkbox" id="exclusive-tags"><input type="checkbox"><label class="label">Poissulkeva</label></div> -->
-                <div>
-                    <ul class="tags " id="tag-types">
-                        <li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Baari</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Yökerho</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Kahvila</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Pubi</label></div></li>
-                    </ul>
+            <div>
+                <div class="text-input">
+                    <input id="search-input" type="text">
+                    <div class="btn search-btn" id="clear-search-btn"><img src="./icons/close-dark-icon.png" alt="X"></div>
+                    <div class="btn search-btn" id="search-btn"><img src="./icons/search.png" alt=""></div>
                 </div>
-                <div>
-                    <ul class="tags" id="tag-styles">
-                        <li><div class="slider-checkbox"><input type="checkbox"><label class="label">Biljardi</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Live musiikki</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Metalli</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Olut</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Karaoke</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Rock</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Sportti</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">LGBT</label></div></li>
-                    </ul>
+    
+                <div id="tag-selection">
+                    <div>
+                        <ul class="tags " id="tag-types">
+                            <li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Baari</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Yökerho</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Kahvila</label></div></li><li><div class="slider-checkbox"><input checked type="checkbox"><label class="label">Pubi</label></div></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul class="tags" id="tag-styles">
+                            <li><div class="slider-checkbox"><input type="checkbox"><label class="label">Biljardi</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Live musiikki</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Metalli</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Olut</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Karaoke</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Rock</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">Sportti</label></div></li><li><div class="slider-checkbox"><input type="checkbox"><label class="label">LGBT</label></div></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -57,29 +66,30 @@
     </header>
 
     <main>
-        <div id="map"></div>
+        <div id="map">
+            <span id="spinner" class="hidden">BARSPOTTING</span>
+        </div>
         <section id="route-panel">
-            <div class="btn" id="route-panel-btn">
-                <img src="./icons/close-icon.png" alt="routes">
+            <div id="bar-info-header">
+                <a id="bar-link" target="_blank" href="#"><h3 id="bar-name"></h3><img src="./icons/link-light-icon.png" alt=""></a>
+                <div class="btn" id="route-panel-btn">
+                    <img class="small-icon" src="./icons/close-light-icon.png" alt="routes">
+                </div>
+                <div class="btn" id="close-route-btn">
+                    <img id="back-btn" class="small-icon" src="./icons/expand-icon.png" alt="back">
+                </div>
             </div>
-
             <article id="bar-info">
-                <h3 id="bar-name"></h3>
-                <h4><a id="bar-link" target="_blank" href="#">Bar's home page</a></h4>
                 <p id="bar-description"></p>
             </article>
             <ul id="route-list">
-                <span class="btn" id="close-route-btn">Go back</span>
-                <section>
-                    
-                </section>
             </ul>
             <ul class="hidden" id="route-instructions">
             </ul>
         </section>
     </main>
     
-    <!-- app javascript -->
+    <!-- app -->
     <script src="./js/main.js" type="module"></script>
 
 </body>
